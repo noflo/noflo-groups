@@ -1,8 +1,10 @@
 noflo = require("noflo")
+_s = require("underscore.string")
 
 class ObjectifyByGroup extends noflo.Component
 
-  description: "specify a regexp string, use the `$1` of a matching group as the key of an object containing the data"
+  description: _s.clean "specify a regexp string, use the `$1` of a
+  matching group as the key of an object containing the data"
 
   constructor: ->
     @regexp = null
@@ -18,15 +20,18 @@ class ObjectifyByGroup extends noflo.Component
       @regexp = new RegExp(regexp)
 
     @inPorts.in.on "begingroup", (group) =>
+      console.log("* AAA: #{group} | #{@regexp}")
       if @regexp? and group.match(@regexp)?
+        console.log("* BBB")
         [original, match, rest...] = group.match(@regexp)
         @match = match
       else
         @outPorts.out.beginGroup(group)
 
     @inPorts.in.on "data", (data) =>
+      console.log("* CCC: #{@match?}")
       # If there is a match, make an object out of it
-      if @match
+      if @match?
         d = data
         data = {}
         data[@match] = d

@@ -34,7 +34,6 @@
     { "ObjectifyByGroup": "./components/ObjectifyByGroup.coffee"
     , "ReadGroup": "./components/ReadGroup.coffee"
     , "RemoveGroup": "./components/RemoveGroup.coffee"
-    , "MatchGroup": "./components/MatchGroup.coffee"
     }
   , "graphs":
     { "ExtractHashedGroupValue": "./graphs/ExtractHashedGroupValue.coffee"

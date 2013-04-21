@@ -1,4 +1,6 @@
-# Extract the value for groups in format of `key:value`
+EXPORT=KEY.IN:IN
+EXPORT=KEY.GROUP:GROUP
+EXPORT=VALUE.OUT:OUT
 
 Group(ReadGroup) OUT -> IN SliceSplit(Split)
 
