@@ -1,0 +1,47 @@
+{ "name": "noflo-groups"
+, "description": "Group Utilities for NoFlo"
+, "keywords":
+  [ "noflo"
+  , "groups"
+  , "utilities"
+  ]
+, "author": "Kenneth Kan <kenhkan@gmail.com>"
+, "version": "0.0.1"
+, "licenses":
+  [ { "type": "MIT"
+    , "url": "https://github.com/kenhkan/noflo-groups/blob/master/LICENSE.md"
+    }
+  ]
+, "engines":
+  { "node": ">=0.6.0"
+  }
+, "repository":
+  { "type": "git"
+  , "url": "git://github.com/kenhkan/noflo-groups"
+  }
+, "dependencies":
+  { "noflo": "0.3.x"
+  , "underscore": "1.4.x"
+  , "underscore.string": "2.3.x"
+  }
+, "devDependencies":
+  { "coffeelint": "*"
+  , "coffee-script": "1.6.x"
+  , "noflo-test": "0.0.x"
+  }
+, "noflo":
+  { "components":
+    { "ObjectifyByGroup": "./components/ObjectifyByGroup.coffee"
+    , "ReadGroup": "./components/ReadGroup.coffee"
+    , "RemoveGroup": "./components/RemoveGroup.coffee"
+    , "MatchGroup": "./components/MatchGroup.coffee"
+    }
+  , "graphs":
+    { "ExtractHashedGroupValue": "./graphs/ExtractHashedGroupValue.coffee"
+    }
+  }
+, "scripts":
+  { "pretest": "./node_modules/.bin/coffeelint -r components"
+  , "test": "./node_modules/.bin/noflo-test --spec test/*.coffee"
+  }
+}
