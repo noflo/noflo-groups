@@ -31,12 +31,13 @@
   }
 , "noflo":
   { "components":
-    { "ObjectifyByGroup": "./components/ObjectifyByGroup.coffee"
-    , "ReadGroup": "./components/ReadGroup.coffee"
-    , "RemoveGroup": "./components/RemoveGroup.coffee"
+    { "Objectify": "./components/Objectify.coffee"
+    , "ReadGroup": "./components/Read.coffee"
+    , "RemoveGroup": "./components/Remove.coffee"
     }
   , "graphs":
-    { "ExtractHashedGroupValue": "./graphs/ExtractHashedGroupValue.coffee"
+    { "ExtractHashValue": "./graphs/ExtractHashValue.coffee"
+    , "ObjectifyByGroup": "./graphs/ObjectifyByGroup.coffee"
     }
   }
 , "scripts":

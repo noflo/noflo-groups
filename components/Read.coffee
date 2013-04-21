@@ -1,6 +1,6 @@
 noflo = require("noflo")
 
-class ReadGroup extends noflo.Component
+class Read extends noflo.Component
   constructor: ->
     @inPorts =
       in: new noflo.ArrayPort
@@ -13,4 +13,4 @@ class ReadGroup extends noflo.Component
     @inPorts.in.on "disconnect", =>
       @outPorts.out.disconnect()
 
-exports.getComponent = -> new ReadGroup
+exports.getComponent = -> new Read
