@@ -32,8 +32,8 @@
 , "noflo":
   { "components":
     { "Objectify": "./components/Objectify.coffee"
-    , "ReadGroup": "./components/Read.coffee"
-    , "RemoveGroup": "./components/Remove.coffee"
+    , "Read": "./components/Read.coffee"
+    , "Remove": "./components/Remove.coffee"
     , "Regroup": "./components/Regroup.coffee"
     }
   , "graphs":
