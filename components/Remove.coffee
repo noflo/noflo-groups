@@ -17,14 +17,14 @@ class Remove extends noflo.Component
       @regexp = new RegExp(regexp)
 
     @inPorts.in.on "begingroup", (group) =>
-      unless @regexp? and group.match(@regexp)?
+      if @regexp? and not group.match(@regexp)?
         @outPorts.out.beginGroup(group)
 
     @inPorts.in.on "data", (data) =>
       @outPorts.out.send(data)
 
     @inPorts.in.on "endgroup", (group) =>
-      unless @regexp? and group.match(@regexp)?
+      if @regexp? and not group.match(@regexp)?
         @outPorts.out.endGroup()
 
     @inPorts.in.on "disconnect", =>
