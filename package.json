@@ -35,6 +35,7 @@
     , "Read": "./components/Read.coffee"
     , "Remove": "./components/Remove.coffee"
     , "Regroup": "./components/Regroup.coffee"
+    , "Group": "./components/Group.coffee"
     }
   , "graphs":
     { "ExtractHashValue": "./graphs/ExtractHashValue.coffee"
