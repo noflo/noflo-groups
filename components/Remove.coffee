@@ -9,11 +9,11 @@ class Remove extends noflo.Component
 
     @inPorts =
       in: new noflo.Port
-      group: new noflo.Port
+      regexp: new noflo.Port
     @outPorts =
       out: new noflo.Port
 
-    @inPorts.group.on "data", (regexp) =>
+    @inPorts.regexp.on "data", (regexp) =>
       @regexp = new RegExp(regexp)
 
     @inPorts.in.on "begingroup", (group) =>

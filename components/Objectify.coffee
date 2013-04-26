@@ -1,4 +1,5 @@
 noflo = require("noflo")
+_ = require("underscore")
 _s = require("underscore.string")
 
 class Objectify extends noflo.Component
@@ -21,8 +22,7 @@ class Objectify extends noflo.Component
 
     @inPorts.in.on "begingroup", (group) =>
       if @regexp? and group.match(@regexp)?
-        [original, match, rest...] = group.match(@regexp)
-        @match = match
+        @match = _.first group.match @regexp
 
       @outPorts.out.beginGroup(group)
 

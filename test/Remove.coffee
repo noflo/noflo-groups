@@ -2,7 +2,7 @@ test = require "noflo-test"
 
 test.component("groups/Remove").
   discuss("provide a regexp").
-    send.data("group", "abc").
+    send.data("regexp", "abc").
   discuss("provide some grouped packets").
     send.connect("in").
       send.beginGroup("in", "abcd").

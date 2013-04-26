@@ -36,10 +36,11 @@
     , "Remove": "./components/Remove.coffee"
     , "Regroup": "./components/Regroup.coffee"
     , "Group": "./components/Group.coffee"
+    , "FilterByGroup": "./components/FilterByGroup.coffee"
     }
   , "graphs":
-    { "ExtractHashValue": "./graphs/ExtractHashValue.coffee"
-    , "ObjectifyByGroup": "./graphs/ObjectifyByGroup.coffee"
+    { "ExtractHashValue": "./graphs/ExtractHashValue.fbp"
+    , "ObjectifyByGroup": "./graphs/ObjectifyByGroup.fbp"
     }
   }
 , "scripts":
