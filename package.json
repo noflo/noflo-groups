@@ -31,12 +31,12 @@
   }
 , "noflo":
   { "components":
-    { "Objectify": "./components/Objectify.coffee"
-    , "Read": "./components/Read.coffee"
+    { "Read": "./components/Read.coffee"
     , "Remove": "./components/Remove.coffee"
     , "Regroup": "./components/Regroup.coffee"
     , "Group": "./components/Group.coffee"
     , "FilterByGroup": "./components/FilterByGroup.coffee"
+    , "Objectify": "./components/Objectify.coffee"
     }
   , "graphs":
     { "ExtractHashValue": "./graphs/ExtractHashValue.fbp"
