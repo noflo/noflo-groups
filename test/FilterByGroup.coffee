@@ -15,7 +15,8 @@ test.component("groups/FilterByGroup").
         send.data("in", 3).
       send.endGroup("in").
     send.disconnect("in").
-  discuss("only get back the content with a matching top-level group").
+  discuss("only get back the content with a matching top-level group with the match via another port").
+    receive.data("group", "abc").
     receive.data("out", 1).
 
   next().
@@ -34,6 +35,7 @@ test.component("groups/FilterByGroup").
       send.endGroup("in").
     send.disconnect("in").
   discuss("gets sub-groups and content too").
+    receive.data("group", "abc").
     receive.data("out", 1).
     receive.beginGroup("out", "xyz").
       receive.data("out", 3).

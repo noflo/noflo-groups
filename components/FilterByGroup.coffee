@@ -16,6 +16,7 @@ class FilterByGroup extends noflo.Component
       regexp: new noflo.Port
     @outPorts =
       out: new noflo.Port
+      group: new noflo.Port
 
     @inPorts.regexp.on "data", (regexp) =>
       @regexp = new RegExp(regexp)
@@ -31,6 +32,8 @@ class FilterByGroup extends noflo.Component
 
       if not @matchedLevel? and @regexp? and group.match(@regexp)?
         @matchedLevel = @level
+        @outPorts.group.send(group)
+        @outPorts.group.disconnect()
 
     @inPorts.in.on "data", (data) =>
       if @matchedLevel?
