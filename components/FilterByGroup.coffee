@@ -23,6 +23,7 @@ class FilterByGroup extends noflo.Component
 
     @inPorts.in.on "connect", =>
       @level = 0
+      @hasMatched = false
 
     @inPorts.in.on "begingroup", (group) =>
       if @matchedLevel?
@@ -32,8 +33,8 @@ class FilterByGroup extends noflo.Component
 
       if not @matchedLevel? and @regexp? and group.match(@regexp)?
         @matchedLevel = @level
-        @outPorts.group.send(group)
-        @outPorts.group.disconnect()
+        @hasMatched = true
+        @outPorts.group.send(group) if @outPorts.group.isAttached()
 
     @inPorts.in.on "data", (data) =>
       if @matchedLevel?
@@ -49,6 +50,8 @@ class FilterByGroup extends noflo.Component
       @level--
 
     @inPorts.in.on "disconnect", =>
-      @outPorts.out.disconnect()
+      if @hasMatched
+        @outPorts.out.disconnect()
+        @outPorts.group.disconnect() if @outPorts.group.isAttached()
 
 exports.getComponent = -> new FilterByGroup
