@@ -31,8 +31,8 @@
   }
 , "noflo":
   { "components":
-    { "Read": "./components/Read.coffee"
-    , "Remove": "./components/Remove.coffee"
+    { "ReadGroups": "./components/ReadGroups.coffee"
+    , "RemoveGroups": "./components/RemoveGroups.coffee"
     , "Regroup": "./components/Regroup.coffee"
     , "Group": "./components/Group.coffee"
     , "GroupZip": "./components/GroupZip.coffee"

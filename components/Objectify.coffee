@@ -4,8 +4,8 @@ _s = require("underscore.string")
 
 class Objectify extends noflo.Component
 
-  description: _s.clean "specify a regexp string, use the `$1` of a
-  matching group as the key of an object containing the data"
+  description: _s.clean "specify a regexp string, use the first match as
+  the key of an object containing the data"
 
   constructor: ->
     @regexp = null
