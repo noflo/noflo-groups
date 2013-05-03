@@ -51,7 +51,7 @@ class FilterByGroup extends noflo.Component
 
     @inPorts.in.on "disconnect", =>
       if @hasMatched
-        @outPorts.out.disconnect()
         @outPorts.group.disconnect() if @outPorts.group.isAttached()
+        @outPorts.out.disconnect()
 
 exports.getComponent = -> new FilterByGroup
