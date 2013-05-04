@@ -17,13 +17,14 @@ class FilterByGroup extends noflo.Component
     @outPorts =
       out: new noflo.Port
       group: new noflo.Port
+      empty: new noflo.Port
 
     @inPorts.regexp.on "data", (regexp) =>
       @regexp = new RegExp(regexp)
 
     @inPorts.in.on "connect", =>
       @level = 0
-      @hasMatched = false
+      @hasContent = false
 
     @inPorts.in.on "begingroup", (group) =>
       if @matchedLevel?
@@ -33,11 +34,11 @@ class FilterByGroup extends noflo.Component
 
       if not @matchedLevel? and @regexp? and group.match(@regexp)?
         @matchedLevel = @level
-        @hasMatched = true
         @outPorts.group.send(group) if @outPorts.group.isAttached()
 
     @inPorts.in.on "data", (data) =>
       if @matchedLevel?
+        @hasContent = true
         @outPorts.out.send(data)
 
     @inPorts.in.on "endgroup", (group) =>
@@ -50,8 +51,11 @@ class FilterByGroup extends noflo.Component
       @level--
 
     @inPorts.in.on "disconnect", =>
-      if @hasMatched
-        @outPorts.group.disconnect() if @outPorts.group.isAttached()
-        @outPorts.out.disconnect()
+      if not @hasContent and @outPorts.empty.isAttached()
+        @outPorts.empty.send null
+        @outPorts.empty.disconnect()
+
+      @outPorts.group.disconnect() if @outPorts.group.isAttached()
+      @outPorts.out.disconnect()
 
 exports.getComponent = -> new FilterByGroup
