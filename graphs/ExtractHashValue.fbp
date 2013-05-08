@@ -4,12 +4,12 @@ EXPORT=VALUE.OUT:OUT
 
 Group(ReadGroup) OUT -> IN SliceSplit(Split)
 
-SliceSplit() OUT -> IN WaitForPattern(Wait) OUT -> IN Filter(FilterString) OUT -> IN Value(Replace)
-SliceSplit() OUT -> READY WaitForGroup(Wait)
+SliceSplit() OUT -> IN WaitForPattern(flow/Cache) OUT -> IN Filter(FilterString) OUT -> IN Value(Replace)
+SliceSplit() OUT -> READY WaitForGroup(flow/Cache)
 
 '$1' -> REPLACEMENT Value()
 '%key' -> PATTERN Pattern(Replace)
-'^%key:(.+)' -> IN WaitForKey(Wait) OUT -> IN Pattern() OUT -> IN WaitForGroup() OUT -> IN Split(Split)
+'^%key:(.+)' -> IN WaitForKey(flow/Cache) OUT -> IN Pattern() OUT -> IN WaitForGroup() OUT -> IN Split(Split)
 Key(Split) OUT -> REPLACEMENT Pattern()
 Key() OUT -> READY WaitForKey()
 
