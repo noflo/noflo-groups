@@ -1,4 +1,4 @@
-noflo = require '../../lib/NoFlo'
+noflo = require 'noflo'
 
 class ReadGroup extends noflo.Component
   constructor: ->

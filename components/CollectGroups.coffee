@@ -1,4 +1,4 @@
-noflo = require "../../lib/NoFlo"
+noflo = require 'noflo'
 
 class CollectGroups extends noflo.Component
   description: 'Collect packets into object keyed by its groups'
@@ -13,22 +13,22 @@ class CollectGroups extends noflo.Component
       out: new noflo.Port 'object'
       error: new noflo.Port 'object'
 
-    @inPorts.in.on "connect", =>
+    @inPorts.in.on 'connect', =>
       @data = {}
-    @inPorts.in.on "begingroup", (group) =>
+    @inPorts.in.on 'begingroup', (group) =>
       if group is '$data'
-        @error 'groups cannot be named "$data"'
+        @error 'groups cannot be named '$data''
         return
       @parents.push @data
       @groups.push group
       @data = {}
-    @inPorts.in.on "data", (data) =>
+    @inPorts.in.on 'data', (data) =>
       @setData data
-    @inPorts.in.on "endgroup", =>
+    @inPorts.in.on 'endgroup', =>
       data = @data
       @data = @parents.pop()
       @addChild @data, @groups.pop(), data
-    @inPorts.in.on "disconnect", =>
+    @inPorts.in.on 'disconnect', =>
       @outPorts.out.send @data
       @outPorts.out.disconnect()
 
@@ -38,7 +38,7 @@ class CollectGroups extends noflo.Component
     parent[child] = [ parent[child], data ]
 
   setData: (data) ->
-    @data.$data = [] unless "$data" of @data
+    @data.$data = [] unless '$data' of @data
     @data.$data.push data
 
   setDataToKey: (target, key, value) ->

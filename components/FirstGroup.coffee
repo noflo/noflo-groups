@@ -1,4 +1,4 @@
-noflo = require "../../lib/NoFlo"
+noflo = require 'noflo'
 
 class FirstGroup extends noflo.Component
   constructor: ->

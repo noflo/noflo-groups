@@ -1,4 +1,4 @@
-noflo = require "../../lib/NoFlo"
+noflo = require 'noflo'
 {_} = require 'underscore'
 
 class MergeGroups extends noflo.Component
