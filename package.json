@@ -1,51 +1,53 @@
-{ "name": "noflo-groups"
-, "description": "Group Utilities for NoFlo"
-, "keywords":
-  [ "noflo"
-  , "groups"
-  , "utilities"
-  ]
-, "author": "Kenneth Kan <kenhkan@gmail.com>"
-, "version": "0.0.6"
-, "licenses":
-  [ { "type": "MIT"
-    , "url": "https://github.com/kenhkan/noflo-groups/blob/master/LICENSE.md"
+{
+  "name": "noflo-groups",
+  "description": "Group Utilities for NoFlo",
+  "keywords": [
+    "noflo",
+    "groups",
+    "utilities"
+  ],
+  "author": "Kenneth Kan <kenhkan@gmail.com>",
+  "version": "0.0.6",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/kenhkan/noflo-groups/blob/master/LICENSE.md"
     }
-  ]
-, "engines":
-  { "node": ">=0.6.0"
-  }
-, "repository":
-  { "type": "git"
-  , "url": "git://github.com/kenhkan/noflo-groups"
-  }
-, "dependencies":
-  { "noflo": "https://github.com/kenhkan/noflo/tarball/master"
-  , "underscore": "1.4.x"
-  , "underscore.string": "2.3.x"
-  }
-, "devDependencies":
-  { "coffeelint": "*"
-  , "coffee-script": "1.6.x"
-  , "noflo-test": "https://github.com/kenhkan/noflo-test/tarball/master"
-  }
-, "noflo":
-  { "components":
-    { "ReadGroups": "./components/ReadGroups.coffee"
-    , "RemoveGroups": "./components/RemoveGroups.coffee"
-    , "Regroup": "./components/Regroup.coffee"
-    , "Group": "./components/Group.coffee"
-    , "GroupZip": "./components/GroupZip.coffee"
-    , "FilterByGroup": "./components/FilterByGroup.coffee"
-    , "Objectify": "./components/Objectify.coffee"
+  ],
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kenhkan/noflo-groups"
+  },
+  "dependencies": {
+    "noflo": "https://github.com/kenhkan/noflo/tarball/master",
+    "underscore": "1.4.x",
+    "underscore.string": "2.3.x"
+  },
+  "devDependencies": {
+    "coffeelint": "*",
+    "coffee-script": "1.6.x",
+    "noflo-test": "https://github.com/kenhkan/noflo-test/tarball/master"
+  },
+  "noflo": {
+    "components": {
+      "ReadGroups": "./components/ReadGroups.coffee",
+      "RemoveGroups": "./components/RemoveGroups.coffee",
+      "Regroup": "./components/Regroup.coffee",
+      "Group": "./components/Group.coffee",
+      "GroupZip": "./components/GroupZip.coffee",
+      "FilterByGroup": "./components/FilterByGroup.coffee",
+      "Objectify": "./components/Objectify.coffee"
+    },
+    "graphs": {
+      "ExtractHashValue": "./graphs/ExtractHashValue.fbp",
+      "ObjectifyByGroup": "./graphs/ObjectifyByGroup.fbp"
     }
-  , "graphs":
-    { "ExtractHashValue": "./graphs/ExtractHashValue.fbp"
-    , "ObjectifyByGroup": "./graphs/ObjectifyByGroup.fbp"
-    }
-  }
-, "scripts":
-  { "pretest": "./node_modules/.bin/coffeelint -r components"
-  , "test": "./node_modules/.bin/noflo-test --spec test/*.coffee"
+  },
+  "scripts": {
+    "pretest": "./node_modules/.bin/coffeelint -r components",
+    "test": "./node_modules/.bin/noflo-test --spec test/*.coffee"
   }
 }
