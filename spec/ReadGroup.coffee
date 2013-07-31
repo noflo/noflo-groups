@@ -1,6 +1,6 @@
 noflo = require 'noflo'
 
-if typeof process is 'object' and process.title is 'node'
+unless noflo.isBrowser()
   chai = require 'chai' unless chai
   ReadGroup = require '../components/ReadGroup.coffee'
 else
