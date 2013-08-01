@@ -1,10 +1,9 @@
 noflo = require("noflo")
-_s = require("underscore.string")
 
 class Regroup extends noflo.Component
 
-  description: _s.clean "Forward all the data IPs, strip all groups, and
-    replace them with groups from another connection"
+  description: "Forward all the data IPs, strip all groups, and replace
+  them with groups from another connection"
 
   constructor: ->
     @groups = []
