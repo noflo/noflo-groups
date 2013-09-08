@@ -73,12 +73,9 @@ class CollectGroups extends noflo.Component
 
   setData: (data) ->
     # Initialize our data IPs storage as an array if it doesn't exist
-    @data.$data = [] unless '$data' of @data
+    @data.$data ?= []
     # Save the IP
     @data.$data.push data
-
-  setDataToKey: (target, key, value) ->
-    target[key].value = value
 
   # Error handling
   error: (msg) ->
