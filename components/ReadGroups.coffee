@@ -14,7 +14,8 @@ class ReadGroups extends noflo.Component
       out: new noflo.Port
       group: new noflo.Port
 
-    @inPorts.threshold.on 'data', (@threshold) =>
+    @inPorts.threshold.on 'data', (threshold) =>
+      @threshold = parseInt threshold
     @inPorts.strip.on 'data', (strip) =>
       @strip = strip is 'true'
 
