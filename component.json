@@ -10,6 +10,7 @@
   "version": "0.1.0",
   "repo": "kenhkan/groups",
   "dependencies": {
+    "component/underscore": "*",
     "noflo/noflo": "*"
   },
   "scripts": [
