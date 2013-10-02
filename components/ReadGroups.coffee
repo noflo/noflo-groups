@@ -26,7 +26,7 @@ class ReadGroups extends noflo.Component
     @inPorts.in.on 'begingroup', (group) =>
       beginGroup = =>
         @groups.push group
-        @outPorts.out.beginGroup group
+        @outPorts.out.beginGroup group if @outPorts.out.isAttached()
 
       # Just forward if we're past the threshold
       if @count >= @threshold
@@ -41,13 +41,13 @@ class ReadGroups extends noflo.Component
     @inPorts.in.on 'endgroup', (group) =>
       if group is _.last @groups
         @groups.pop()
-        @outPorts.out.endGroup()
+        @outPorts.out.endGroup() if @outPorts.out.isAttached()
 
     @inPorts.in.on 'data', (data) =>
-      @outPorts.out.send data
+      @outPorts.out.send data if @outPorts.out.isAttached()
 
     @inPorts.in.on 'disconnect', =>
-      @outPorts.out.disconnect()
+      @outPorts.out.disconnect() if @outPorts.out.isAttached()
       @outPorts.group.disconnect()
 
 exports.getComponent = -> new ReadGroups
