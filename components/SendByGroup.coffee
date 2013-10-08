@@ -52,3 +52,5 @@ class SendByGroup extends noflo.Component
     @outPorts.out.send data
     for group in @inGroups
       @outPorts.out.endGroup()
+
+exports.getComponent = -> new SendByGroup
