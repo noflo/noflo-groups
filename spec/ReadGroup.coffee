@@ -4,7 +4,7 @@ unless noflo.isBrowser()
   chai = require 'chai' unless chai
   ReadGroup = require '../components/ReadGroup.coffee'
 else
-  ReadGroup = require 'noflo-core/components/ReadGroup.js'
+  ReadGroup = require 'noflo-groups/components/ReadGroup.js'
 
 describe 'ReadGroup component', ->
   c = null

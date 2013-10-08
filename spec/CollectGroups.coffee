@@ -4,7 +4,7 @@ unless noflo.isBrowser()
   chai = require 'chai' unless chai
   CollectGroups = require '../components/CollectGroups.coffee'
 else
-  CollectGroups = require 'noflo-core/components/CollectGroups.js'
+  CollectGroups = require 'noflo-groups/components/CollectGroups.js'
 
 describe 'CollectGroups component', ->
   c = null
