@@ -6,11 +6,13 @@ class CollectObject extends noflo.Component
 
   constructor: ->
     @keys = []
+    @allpackets = []
     @data = {}
     @groups = {}
 
     @inPorts =
       keys: new noflo.ArrayPort 'string'
+      allpackets: new noflo.ArrayPort 'string'
       collect: new noflo.ArrayPort 'all'
       release: new noflo.Port 'bang'
       clear: new noflo.Port 'bang'
@@ -23,6 +25,13 @@ class CollectObject extends noflo.Component
         @keys = []
       for key in keys
         @keys.push key
+
+    @inPorts.allpackets.on 'data', (key) =>
+      allpackets = key.split ','
+      if allpackets.length > 1
+        @keys = []
+      for key in allpackets
+        @allpackets.push key
 
     @inPorts.collect.once 'connect', =>
       @subscribeSockets()
@@ -52,6 +61,11 @@ class CollectObject extends noflo.Component
       groupId = @groupId @groups[id]
       unless @data[groupId]
         @data[groupId] = {}
+      if @allpackets.indexOf(@keys[id]) isnt -1
+        unless @data[groupId][@keys[id]]
+          @data[groupId][@keys[id]] = []
+        @data[groupId][@keys[id]].push data
+        return
       @data[groupId][@keys[id]] = data
     socket.on 'endgroup', =>
       return unless @groups[id]
