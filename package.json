@@ -59,6 +59,7 @@
       "FilterByGroup": "./components/FilterByGroup.coffee",
       "Objectify": "./components/Objectify.coffee",
       "ReadGroup": "./components/ReadGroup.coffee",
+      "SendByGroup": "components/SendByGroup.coffee",
       "CollectGroups": "./components/CollectGroups.coffee",
       "FirstGroup": "./components/FirstGroup.coffee",
       "MapGroup": "./components/MapGroup.coffee",
