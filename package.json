@@ -61,6 +61,7 @@
       "ReadGroup": "./components/ReadGroup.coffee",
       "SendByGroup": "components/SendByGroup.coffee",
       "CollectGroups": "./components/CollectGroups.coffee",
+      "CollectObject": "components/CollectObject.coffee",
       "FirstGroup": "./components/FirstGroup.coffee",
       "MapGroup": "./components/MapGroup.coffee",
       "MergeGroups": "./components/MergeGroups.coffee",
