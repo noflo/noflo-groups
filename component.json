@@ -35,6 +35,7 @@
     "component.json"
   ],
   "noflo": {
+    "icon": "tags",
     "components": {
       "ReadGroups": "components/ReadGroups.coffee",
       "RemoveGroups": "components/RemoveGroups.coffee",
