@@ -31,11 +31,11 @@ class SendByGroup extends noflo.Component
     @inPorts.in.on 'begingroup', (group) =>
       @inGroups.push group
     @inPorts.in.on 'data', (data) =>
-      unless @dataGroups.length
+      unless @inGroups.length
         @send @ungrouped if @ungrouped isnt null
         return
       id = @groupId @inGroups
-      unless @data[@groupId]
+      unless @data[id]
         return
       @send @data[id]
     @inPorts.in.on 'endgroup', =>
