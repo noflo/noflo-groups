@@ -38,12 +38,13 @@ class CollectObject extends noflo.Component
 
     @inPorts.release.on 'data', =>
       do @release
+    @inPorts.release.on 'disconnect', =>
+      @outPorts.out.disconnect()
     @inPorts.clear.on 'data', =>
       do @clear
 
   release: ->
     @outPorts.out.send @data
-    @outPorts.out.disconnect()
     @data = @clone @data
 
   subscribeSockets: ->
