@@ -3,7 +3,7 @@ noflo = require 'noflo'
 class SendByGroup extends noflo.Component
   description: 'Send packet held in "data" when receiving
   matching set of groups in "in"'
-  icon: 'share-sign'
+  icon: 'share-square'
 
   constructor: ->
     @data = {}
