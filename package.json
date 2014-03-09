@@ -69,7 +69,6 @@
       "GroupByObjectKey": "./components/GroupByObjectKey.coffee"
     },
     "graphs": {
-      "ExtractHashValue": "./graphs/ExtractHashValue.fbp",
       "ObjectifyByGroup": "./graphs/ObjectifyByGroup.fbp"
     }
   },
