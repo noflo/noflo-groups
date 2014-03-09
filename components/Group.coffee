@@ -1,14 +1,16 @@
 noflo = require "noflo"
 
 class Group extends noflo.Component
+  description: 'Add groups to a packet'
   constructor: ->
     @newGroups = []
 
     @inPorts =
-      in: new noflo.Port
-      group: new noflo.Port
+      in: new noflo.Port 'all'
+      group: new noflo.Port 'string'
+      clear: new noflo.Port 'bang'
     @outPorts =
-      out: new noflo.Port
+      out: new noflo.Port 'all'
 
     @inPorts.in.on "connect", () =>
       @outPorts.out.beginGroup group for group in @newGroups
