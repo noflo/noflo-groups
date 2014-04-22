@@ -27,6 +27,7 @@
     "components/CollectObject.coffee",
     "components/CollectTree.coffee",
     "components/FirstGroup.coffee",
+    "components/LastGroup.coffee",
     "components/MapGroup.coffee",
     "components/MergeGroups.coffee",
     "components/GroupByObjectKey.coffee",
@@ -51,6 +52,7 @@
       "CollectObject": "components/CollectObject.coffee",
       "CollectTree": "components/CollectTree.coffee",
       "FirstGroup": "components/FirstGroup.coffee",
+      "LastGroup": "components/LastGroup.coffee",
       "MapGroup": "components/MapGroup.coffee",
       "MergeGroups": "components/MergeGroups.coffee",
       "GroupByObjectKey": "components/GroupByObjectKey.coffee"
