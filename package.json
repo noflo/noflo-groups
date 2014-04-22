@@ -65,6 +65,7 @@
       "CollectObject": "components/CollectObject.coffee",
       "CollectTree": "components/CollectTree.coffee",
       "FirstGroup": "./components/FirstGroup.coffee",
+      "LastGroup": "./components/LastGroup.coffee",
       "MapGroup": "./components/MapGroup.coffee",
       "MergeGroups": "./components/MergeGroups.coffee",
       "GroupByObjectKey": "./components/GroupByObjectKey.coffee"
