@@ -11,6 +11,7 @@
   "repo": "kenhkan/groups",
   "dependencies": {
     "component/underscore": "*",
+    "broofa/node-uuid": "*",
     "noflo/noflo": "*"
   },
   "scripts": [
@@ -30,6 +31,7 @@
     "components/MapGroup.coffee",
     "components/MergeGroups.coffee",
     "components/GroupByObjectKey.coffee",
+    "components/GenerateGroup.coffee",
     "index.js"
   ],
   "json": [
@@ -53,7 +55,8 @@
       "FirstGroup": "components/FirstGroup.coffee",
       "MapGroup": "components/MapGroup.coffee",
       "MergeGroups": "components/MergeGroups.coffee",
-      "GroupByObjectKey": "components/GroupByObjectKey.coffee"
+      "GroupByObjectKey": "components/GroupByObjectKey.coffee",
+      "GenerateGroup": "components/GenerateGroup.coffee"
     }
   }
 }
