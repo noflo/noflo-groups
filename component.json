@@ -12,6 +12,7 @@
   "dependencies": {
     "component/underscore": "*",
     "noflo/noflo": "*"
+    "noflo/noflo-core": "*"
   },
   "scripts": [
     "components/ReadGroups.coffee",
@@ -30,7 +31,8 @@
     "components/MapGroup.coffee",
     "components/MergeGroups.coffee",
     "components/GroupByObjectKey.coffee",
-    "index.js"
+    "index.js",
+    "graphs/ObjectifyByGroup.fbp"
   ],
   "json": [
     "component.json"
@@ -56,16 +58,10 @@
       "SendByGroup": "components/SendByGroup.coffee"
     },
     "graphs": {
-      "ExtractHashValue": "graphs/ExtractHashValue.fbp",
       "ObjectifyByGroup": "graphs/ObjectifyByGroup.fbp"
     }
   },
   "fbp": [
-    "graphs/ExtractHashValue.fbp",
-    "graphs/ObjectifyByGroup.fbp"
-  ],
-  "files": [
-    "graphs/ExtractHashValue.fbp",
     "graphs/ObjectifyByGroup.fbp"
   ]
 }

@@ -3,6 +3,7 @@
 *.js
 !index.js
 node_modules/
+browser/
 npm-debug.log
 components/*/
 spec/*.xml
