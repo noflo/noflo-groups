@@ -63,5 +63,9 @@
   "fbp": [
     "graphs/ExtractHashValue.fbp",
     "graphs/ObjectifyByGroup.fbp"
+  ],
+  "files": [
+    "graphs/ExtractHashValue.fbp",
+    "graphs/ObjectifyByGroup.fbp"
   ]
 }
