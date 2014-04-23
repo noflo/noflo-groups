@@ -38,22 +38,26 @@
   "noflo": {
     "icon": "tags",
     "components": {
-      "ReadGroups": "components/ReadGroups.coffee",
-      "RemoveGroups": "components/RemoveGroups.coffee",
-      "Regroup": "components/Regroup.coffee",
-      "Group": "components/Group.coffee",
-      "GroupZip": "components/GroupZip.coffee",
-      "FilterByGroup": "components/FilterByGroup.coffee",
-      "Objectify": "components/Objectify.coffee",
-      "ReadGroup": "components/ReadGroup.coffee",
-      "SendByGroup": "components/SendByGroup.coffee",
       "CollectGroups": "components/CollectGroups.coffee",
       "CollectObject": "components/CollectObject.coffee",
       "CollectTree": "components/CollectTree.coffee",
+      "FilterByGroup": "components/FilterByGroup.coffee",
       "FirstGroup": "components/FirstGroup.coffee",
+      "Group": "components/Group.coffee",
+      "GroupByObjectKey": "components/GroupByObjectKey.coffee",
+      "GroupZip": "components/GroupZip.coffee",
       "MapGroup": "components/MapGroup.coffee",
       "MergeGroups": "components/MergeGroups.coffee",
-      "GroupByObjectKey": "components/GroupByObjectKey.coffee"
+      "Objectify": "components/Objectify.coffee",
+      "ReadGroup": "components/ReadGroup.coffee",
+      "ReadGroups": "components/ReadGroups.coffee",
+      "Regroup": "components/Regroup.coffee",
+      "RemoveGroups": "components/RemoveGroups.coffee",
+      "SendByGroup": "components/SendByGroup.coffee"
+    },
+    "graphs": {
+      "ExtractHashValue": "graphs/ExtractHashValue.fbp",
+      "ObjectifyByGroup": "graphs/ObjectifyByGroup.fbp"
     }
   }
 }

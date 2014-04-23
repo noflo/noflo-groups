@@ -47,30 +47,32 @@
     "grunt-contrib-watch": "~0.3.1",
     "component-json": "~0.1.4",
     "grunt-combine": "~0.8.3",
-    "grunt-component": "~0.1.2"
+    "grunt-component": "~0.1.2",
+    "grunt-noflo-manifest": "^0.1.2"
   },
   "noflo": {
     "icon": "tags",
     "components": {
-      "ReadGroups": "./components/ReadGroups.coffee",
-      "RemoveGroups": "./components/RemoveGroups.coffee",
-      "Regroup": "./components/Regroup.coffee",
-      "Group": "./components/Group.coffee",
-      "GroupZip": "./components/GroupZip.coffee",
-      "FilterByGroup": "./components/FilterByGroup.coffee",
-      "Objectify": "./components/Objectify.coffee",
-      "ReadGroup": "./components/ReadGroup.coffee",
-      "SendByGroup": "components/SendByGroup.coffee",
-      "CollectGroups": "./components/CollectGroups.coffee",
+      "CollectGroups": "components/CollectGroups.coffee",
       "CollectObject": "components/CollectObject.coffee",
       "CollectTree": "components/CollectTree.coffee",
-      "FirstGroup": "./components/FirstGroup.coffee",
-      "MapGroup": "./components/MapGroup.coffee",
-      "MergeGroups": "./components/MergeGroups.coffee",
-      "GroupByObjectKey": "./components/GroupByObjectKey.coffee"
+      "FilterByGroup": "components/FilterByGroup.coffee",
+      "FirstGroup": "components/FirstGroup.coffee",
+      "Group": "components/Group.coffee",
+      "GroupByObjectKey": "components/GroupByObjectKey.coffee",
+      "GroupZip": "components/GroupZip.coffee",
+      "MapGroup": "components/MapGroup.coffee",
+      "MergeGroups": "components/MergeGroups.coffee",
+      "Objectify": "components/Objectify.coffee",
+      "ReadGroup": "components/ReadGroup.coffee",
+      "ReadGroups": "components/ReadGroups.coffee",
+      "Regroup": "components/Regroup.coffee",
+      "RemoveGroups": "components/RemoveGroups.coffee",
+      "SendByGroup": "components/SendByGroup.coffee"
     },
     "graphs": {
-      "ObjectifyByGroup": "./graphs/ObjectifyByGroup.fbp"
+      "ExtractHashValue": "graphs/ExtractHashValue.fbp",
+      "ObjectifyByGroup": "graphs/ObjectifyByGroup.fbp"
     }
   },
   "scripts": {
