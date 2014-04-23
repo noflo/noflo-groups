@@ -11,7 +11,7 @@
   "repo": "kenhkan/groups",
   "dependencies": {
     "component/underscore": "*",
-    "noflo/noflo": "*"
+    "noflo/noflo": "*",
     "noflo/noflo-core": "*"
   },
   "scripts": [
