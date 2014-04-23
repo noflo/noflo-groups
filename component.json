@@ -59,5 +59,9 @@
       "ExtractHashValue": "graphs/ExtractHashValue.fbp",
       "ObjectifyByGroup": "graphs/ObjectifyByGroup.fbp"
     }
-  }
+  },
+  "fbp": [
+    "graphs/ExtractHashValue.fbp",
+    "graphs/ObjectifyByGroup.fbp"
+  ]
 }
