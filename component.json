@@ -12,7 +12,8 @@
   "dependencies": {
     "component/underscore": "*",
     "noflo/noflo": "*",
-    "noflo/noflo-core": "*"
+    "noflo/noflo-core": "*",
+    "broofa/node-uuid": "*"
   },
   "scripts": [
     "components/ReadGroups.coffee",
@@ -32,8 +33,9 @@
     "components/MapGroup.coffee",
     "components/MergeGroups.coffee",
     "components/GroupByObjectKey.coffee",
-    "index.js",
-    "graphs/ObjectifyByGroup.fbp"
+    "graphs/ObjectifyByGroup.fbp",
+    "components/GenerateGroup.coffee",
+    "index.js"
   ],
   "json": [
     "component.json"
@@ -46,6 +48,7 @@
       "CollectTree": "components/CollectTree.coffee",
       "FilterByGroup": "components/FilterByGroup.coffee",
       "FirstGroup": "components/FirstGroup.coffee",
+      "GenerateGroup": "components/GenerateGroup.coffee",
       "Group": "components/Group.coffee",
       "GroupByObjectKey": "components/GroupByObjectKey.coffee",
       "GroupZip": "components/GroupZip.coffee",
