@@ -63,6 +63,7 @@
       "Group": "components/Group.coffee",
       "GroupByObjectKey": "components/GroupByObjectKey.coffee",
       "GroupZip": "components/GroupZip.coffee",
+      "LastGroup": "components/LastGroup.coffee",
       "MapGroup": "components/MapGroup.coffee",
       "MergeGroups": "components/MergeGroups.coffee",
       "Objectify": "components/Objectify.coffee",
