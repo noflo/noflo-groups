@@ -1,4 +1,4 @@
-# @runtime noflo-nodejs
+# @runtime noflo-legacy
 EXPORT=KEY.IN:IN
 EXPORT=KEY.GROUP:GROUP
 EXPORT=VALUE.OUT:OUT
