@@ -14,12 +14,12 @@ describe 'CollectTree component', ->
 
   beforeEach ->
     c = CollectTree.getComponent()
-    c.inPorts.in.attach noflo.internalSocket.createSocket()
-    c.outPorts.out.attach noflo.internalSocket.createSocket()
-    c.outPorts.error.attach noflo.internalSocket.createSocket()
-    ins = c.inPorts.in
-    out = c.outPorts.out
-    err = c.outPorts.error
+    ins = noflo.internalSocket.createSocket()
+    out = noflo.internalSocket.createSocket()
+    err = noflo.internalSocket.createSocket()
+    c.inPorts.in.attach ins
+    c.outPorts.out.attach out
+    c.outPorts.error.attach err
 
   describe 'without any groups provided', ->
     it 'should send an error and no data', (done) ->
