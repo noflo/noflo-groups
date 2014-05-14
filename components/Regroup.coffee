@@ -8,11 +8,14 @@ class Regroup extends noflo.Component
   constructor: ->
     @groups = []
 
-    @inPorts =
-      in: new noflo.Port
-      group: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+      group:
+        datatype: ''
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.group.on "connect", =>
       @groups = []

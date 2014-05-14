@@ -10,14 +10,20 @@ class CollectObject extends noflo.Component
     @data = {}
     @groups = {}
 
-    @inPorts =
-      keys: new noflo.ArrayPort 'string'
-      allpackets: new noflo.ArrayPort 'string'
-      collect: new noflo.ArrayPort 'all'
-      release: new noflo.Port 'bang'
-      clear: new noflo.Port 'bang'
-    @outPorts =
-      out: new noflo.Port 'object'
+    @inPorts = new noflo.InPorts
+      keys:
+        datatype: 'string'
+      allpackets:
+        datatype: 'string'
+      collect:
+        datatype: 'all'
+      release:
+        datatype: 'bang'
+      clear:
+        datatype: 'bang'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'object'
 
     @inPorts.keys.on 'data', (key) =>
       keys = key.split ','

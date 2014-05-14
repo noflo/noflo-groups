@@ -4,11 +4,14 @@ class ReadGroup extends noflo.Component
   constructor: ->
     @groups = []
 
-    @inPorts =
-      in: new noflo.ArrayPort
-    @outPorts =
-      out: new noflo.Port
-      group: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+      group:
+        datatype: 'string'
 
     @inPorts.in.on 'begingroup', (group) =>
       @groups.push group

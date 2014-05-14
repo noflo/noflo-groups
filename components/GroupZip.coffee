@@ -4,11 +4,14 @@ class GroupZip extends noflo.Component
   constructor: ->
     @newGroups = []
 
-    @inPorts =
-      in: new noflo.Port
-      group: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+      group:
+        datatype: 'string'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.in.on "connect", () =>
       @count = 0

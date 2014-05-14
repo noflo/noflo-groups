@@ -6,13 +6,18 @@ class ReadGroups extends noflo.Component
     @strip = false
     @threshold = Infinity
 
-    @inPorts =
-      in: new noflo.ArrayPort
-      strip: new noflo.Port
-      threshold: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
-      group: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+      strip:
+        datatype: 'string'
+      threshold:
+        datatype: 'all'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+      group:
+        datatype: 'string'
 
     @inPorts.threshold.on 'data', (threshold) =>
       @threshold = parseInt threshold

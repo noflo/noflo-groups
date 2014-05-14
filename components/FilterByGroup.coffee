@@ -10,13 +10,20 @@ class FilterByGroup extends noflo.Component
     @regexp = null
     @matchedLevel = null
 
-    @inPorts =
-      in: new noflo.Port
-      regexp: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
-      group: new noflo.Port
-      empty: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to filter groups from'
+      regexp:
+        datatype: 'string'
+        description: 'Regexp use as a filter for IPs'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+      group:
+        datatype: 'string'
+      empty:
+        datatype: 'bang'
 
     @inPorts.regexp.on "data", (regexp) =>
       @regexp = new RegExp(regexp)
