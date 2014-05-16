@@ -5,10 +5,12 @@ class MergeGroups extends noflo.Component
   constructor: ->
     @groups = {}
     @data = {}
-    @inPorts =
-      in: new noflo.ArrayPort
-    @outPorts =
-      out: new noflo.ArrayPort
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.in.on 'begingroup', (group, socket) =>
       @addGroup socket, group

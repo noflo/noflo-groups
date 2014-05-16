@@ -11,12 +11,17 @@ class SendByGroup extends noflo.Component
     @dataGroups = []
     @inGroups = []
 
-    @inPorts =
-      in: new noflo.Port 'bang'
-      data: new noflo.Port 'all'
-
-    @outPorts =
-      out: new noflo.ArrayPort 'all'
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'bang'
+        description: 'Signal to release IPs associated with the emitted group'
+      data:
+        datatype: 'all'
+        description: 'IPs to store by group'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+        description: 'IP associated with a group received on the in port'
 
     @inPorts.data.on 'begingroup', (group) =>
       @dataGroups.push group
