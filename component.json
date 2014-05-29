@@ -10,7 +10,7 @@
   "version": "0.1.0",
   "repo": "kenhkan/groups",
   "dependencies": {
-    "component/underscore": "*",
+    "jashkenas/underscore": "*",
     "noflo/noflo": "*",
     "noflo/noflo-core": "*",
     "broofa/node-uuid": "*"
