@@ -10,11 +10,17 @@ class CollectGroups extends noflo.Component
     # Breadcrumb of each level of IPs as partitioned by groups
     @parents = []
 
-    @inPorts =
-      in: new noflo.Port 'all'
-    @outPorts =
-      out: new noflo.Port 'object'
-      error: new noflo.Port 'object'
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to collect'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'object'
+        description: 'An object containing input IPs sorted by their group
+         names'
+      error:
+        datatype: 'object'
 
     @inPorts.in.on 'connect', =>
       # Make sure working memory is clean

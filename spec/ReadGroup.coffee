@@ -13,10 +13,10 @@ describe 'ReadGroup component', ->
 
   beforeEach ->
     c = ReadGroup.getComponent()
-    c.inPorts.in.attach noflo.internalSocket.createSocket()
-    c.outPorts.group.attach noflo.internalSocket.createSocket()
-    ins = c.inPorts.in
-    group = c.outPorts.group
+    ins = noflo.internalSocket.createSocket()
+    group = noflo.internalSocket.createSocket()
+    c.inPorts.in.attach ins
+    c.outPorts.group.attach group
 
   describe 'when instantiated', ->
     it 'should have input ports', ->

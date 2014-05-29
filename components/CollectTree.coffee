@@ -7,11 +7,14 @@ class CollectTree extends noflo.Component
   constructor: ->
     @data = null
     @groups = []
-    @inPorts =
-      in: new noflo.Port 'all'
-    @outPorts =
-      out: new noflo.Port 'all'
-      error: new noflo.Port 'object'
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+      error:
+        datatype: 'object'
 
     @inPorts.in.on 'connect', =>
       @data = {}

@@ -6,10 +6,13 @@ class GenerateGroup extends noflo.Component
   description: 'Wrap IPs into a random uuid generated group'
 
   constructor: ->
-    @inPorts =
-      in: new noflo.Port 'all'
-    @outPorts =
-      out: new noflo.Port 'all'
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to forward'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @groups = []
 

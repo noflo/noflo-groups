@@ -5,12 +5,20 @@ class Group extends noflo.Component
   constructor: ->
     @newGroups = []
 
-    @inPorts =
-      in: new noflo.Port 'all'
-      group: new noflo.Port 'string'
-      clear: new noflo.Port 'bang'
-    @outPorts =
-      out: new noflo.Port 'all'
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to forward'
+      group:
+        datatype: 'string'
+        description: 'Groups to encapsulate incoming packets into'
+      clear:
+        datatype: 'bang'
+        description: 'Clear encapsulating groups'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
+        description: 'Forwarded IPs with encapsulating groups'
 
     @inPorts.in.on "connect", () =>
       @outPorts.out.beginGroup group for group in @newGroups

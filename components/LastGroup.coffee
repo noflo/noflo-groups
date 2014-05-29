@@ -1,11 +1,16 @@
 noflo = require 'noflo'
 
 class LastGroup extends noflo.Component
+  description: 'Forward packets wrapped only using the latest emitted
+  group'
   constructor: ->
-    @inPorts =
-      in: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to forward'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @groups = []
     @groupSent = 0

@@ -1,13 +1,17 @@
 noflo = require 'noflo'
 
 class FirstGroup extends noflo.Component
+  description: 'Forward incoming IPs and filter groups except the first one'
   constructor: ->
     @depth = 0
 
-    @inPorts =
-      in: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+        description: 'IPs to forward'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.in.on 'begingroup', (group) =>
       @outPorts.out.beginGroup group if @depth is 0

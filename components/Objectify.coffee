@@ -10,11 +10,14 @@ class Objectify extends noflo.Component
     @regexp = null
     @match = null
 
-    @inPorts =
-      in: new noflo.Port
-      regexp: new noflo.Port
-    @outPorts =
-      out: new noflo.Port
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+      regexp:
+        datatype: 'string'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.regexp.on "data", (regexp) =>
       @regexp = new RegExp(regexp)

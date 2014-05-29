@@ -5,11 +5,14 @@ class GroupByObjectKey extends noflo.Component
     @data = []
     @key = null
 
-    @inPorts =
-      in: new noflo.Port()
-      key: new noflo.Port()
-    @outPorts =
-      out: new noflo.Port()
+    @inPorts = new noflo.InPorts
+      in:
+        datatype: 'all'
+      key:
+        datatype: 'string'
+    @outPorts = new noflo.OutPorts
+      out:
+        datatype: 'all'
 
     @inPorts.in.on 'connect', =>
       @data = []
@@ -25,7 +28,7 @@ class GroupByObjectKey extends noflo.Component
         # Data already sent
         @outPorts.out.disconnect()
         return
-      
+
       # No key, data will be sent when we get it
       return unless @key
 
