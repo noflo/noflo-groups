@@ -40,6 +40,7 @@ class Group extends noflo.Component
       @newGroups = []
 
     @inPorts.group.on "data", (group) =>
-      @newGroups.push(group)
+      groups = group.split ':'
+      @newGroups.push group for group in groups
 
 exports.getComponent = -> new Group
