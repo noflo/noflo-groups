@@ -9,6 +9,7 @@ class CollectTree extends noflo.Component
     @collectGroups = []
     @forwardGroups = []
     @level = 0
+    @currentLevel = 0
     @inPorts = new noflo.InPorts
       in:
         datatype: 'all'
@@ -28,10 +29,11 @@ class CollectTree extends noflo.Component
     @inPorts.in.on 'connect', =>
       @data = {}
     @inPorts.in.on 'begingroup', (group) =>
-      if @forwardGroups.length < @level
+      if @currentLevel < @level
         @forwardGroups.push group
       else
         @collectGroups.push group
+      @currentLevel += 1
     @inPorts.in.on 'data', (data) =>
       return unless @collectGroups.length
       d = @data
@@ -46,11 +48,12 @@ class CollectTree extends noflo.Component
       unless Array.isArray d[g]
         d[g] = [d[g]]
       d[g].push data
-    @inPorts.in.on 'endgroup', =>
-      if @forwardGroups.length < @level
+    @inPorts.in.on 'endgroup', (group) =>
+      if @currentLevel < @level
         # will be sent & reset on disconnect
       else
         @collectGroups.pop()
+      @currentLevel -= 1
     @inPorts.in.on 'disconnect', =>
       @collectGroups = []
       if Object.keys(@data).length

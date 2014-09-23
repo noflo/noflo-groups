@@ -6,6 +6,13 @@ unless noflo.isBrowser()
 else
   CollectTree = require 'noflo-groups/components/CollectTree.js'
 
+groupBy = (port, groups, func) ->
+  for group in groups
+    port.beginGroup group
+  func port
+  for group in groups
+    port.endGroup() # group
+
 describe 'CollectTree component', ->
   c = null
   ins = null
@@ -164,3 +171,50 @@ describe 'CollectTree component', ->
 
       it 'should forward outmost group', () ->
         chai.expect(groups).to.deep.eql [ 'baz' ]
+
+
+    describe 'with group hierarchy per message', () ->
+      groups = []
+      it 'should put each message in right place', (done) ->
+        out.on 'begingroup', (group) ->
+          groups.push group
+        out.on 'data', (data) ->
+          chai.expect(data).to.eql
+            baz:
+              foo: 'bar'
+              foo2: 'bar2'
+              foo3: 'bar3'
+        out.on 'disconnect', ->
+          done()
+
+        groupBy ins, ['baz', 'foo'], () ->
+          ins.send 'bar'
+        groupBy ins, ['baz', 'foo2'], () ->
+          ins.send 'bar2'
+        groupBy ins, ['baz', 'foo3'], () ->
+          ins.send 'bar3'
+        ins.disconnect()
+
+    describe 'with group hierarchy per message and level=1', () ->
+      groups = []
+      it 'should put each message in right place', (done) ->
+        out.on 'begingroup', (group) ->
+          groups.push group
+        out.on 'data', (data) ->
+          chai.expect(data).to.eql
+            foo: 'bar'
+            foo2: 'bar2'
+            foo3: 'bar3'
+        out.on 'disconnect', ->
+          done()
+
+        level.send 1
+        level.disconnect()
+
+        groupBy ins, ['baz', 'foo'], () ->
+          ins.send 'bar'
+        groupBy ins, ['baz', 'foo2'], () ->
+          ins.send 'bar2'
+        groupBy ins, ['baz', 'foo3'], () ->
+          ins.send 'bar3'
+        ins.disconnect()
