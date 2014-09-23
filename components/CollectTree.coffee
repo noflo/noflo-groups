@@ -6,25 +6,39 @@ class CollectTree extends noflo.Component
 
   constructor: ->
     @data = null
-    @groups = []
+    @collectGroups = []
+    @forwardGroups = []
+    @level = 0
+    @currentLevel = 0
     @inPorts = new noflo.InPorts
       in:
         datatype: 'all'
+      level:
+        datatype: 'integer'
+        default: 0
+        description: 'Number of groups (from outermost) to skip collection of'
     @outPorts = new noflo.OutPorts
       out:
         datatype: 'all'
       error:
         datatype: 'object'
 
+    @inPorts.level.on 'data', (data) =>
+      @level = data
+
     @inPorts.in.on 'connect', =>
       @data = {}
     @inPorts.in.on 'begingroup', (group) =>
-      @groups.push group
+      if @currentLevel < @level
+        @forwardGroups.push group
+      else
+        @collectGroups.push group
+      @currentLevel += 1
     @inPorts.in.on 'data', (data) =>
-      return unless @groups.length
+      return unless @collectGroups.length
       d = @data
-      for g, idx in @groups
-        if idx < @groups.length - 1
+      for g, idx in @collectGroups
+        if idx < @collectGroups.length - 1
           d[g] = {} unless d[g]
           d = d[g]
           continue
@@ -34,15 +48,26 @@ class CollectTree extends noflo.Component
       unless Array.isArray d[g]
         d[g] = [d[g]]
       d[g].push data
-    @inPorts.in.on 'endgroup', =>
-      @groups.pop()
+    @inPorts.in.on 'endgroup', (group) =>
+      if @currentLevel < @level
+        # will be sent & reset on disconnect
+      else
+        @collectGroups.pop()
+      @currentLevel -= 1
     @inPorts.in.on 'disconnect', =>
-      @groups = []
+      @collectGroups = []
       if Object.keys(@data).length
+
+        for group in @forwardGroups
+          @outPorts.out.beginGroup group
         @outPorts.out.send @data
+        for group in @forwardGroups
+          @outPorts.out.endGroup()
         @outPorts.out.disconnect()
+        @forwardGroups = []
         @data = null
         return
+
       @data = null
       err = new Error 'No tree information was collected'
       if @outPorts.error.isAttached()

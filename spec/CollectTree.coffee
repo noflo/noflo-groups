@@ -6,18 +6,28 @@ unless noflo.isBrowser()
 else
   CollectTree = require 'noflo-groups/components/CollectTree.js'
 
+groupBy = (port, groups, func) ->
+  for group in groups
+    port.beginGroup group
+  func port
+  for group in groups
+    port.endGroup() # group
+
 describe 'CollectTree component', ->
   c = null
   ins = null
   out = null
   err = null
+  level = null
 
   beforeEach ->
     c = CollectTree.getComponent()
     ins = noflo.internalSocket.createSocket()
+    level = noflo.internalSocket.createSocket()
     out = noflo.internalSocket.createSocket()
     err = noflo.internalSocket.createSocket()
     c.inPorts.in.attach ins
+    c.inPorts.level.attach level
     c.outPorts.out.attach out
     c.outPorts.error.attach err
 
@@ -29,7 +39,8 @@ describe 'CollectTree component', ->
       err.on 'data', (data) ->
         chai.expect(data).to.be.an 'object'
         chai.expect(c.data).to.equal null
-        chai.expect(c.groups.length).to.equal 0
+        chai.expect(c.collectGroups.length).to.equal 0
+        chai.expect(c.forwardGroups.length).to.equal 0
         done()
 
       ins.send 'foo'
@@ -131,3 +142,79 @@ describe 'CollectTree component', ->
       ins.endGroup()
       ins.endGroup()
       ins.disconnect()
+
+
+    describe 'level param set to 1', () ->
+      groups = []
+      it 'should collect inner groups only', (done) ->
+        out.on 'begingroup', (group) ->
+          groups.push group
+        out.on 'data', (data) ->
+          chai.expect(data).to.eql
+            foo: 'bar'
+            foo2: 'bar2'
+        out.on 'disconnect', ->
+          done()
+
+        level.send 1
+        level.disconnect()
+
+        ins.beginGroup 'baz'
+        ins.beginGroup 'foo'
+        ins.send 'bar'
+        ins.endGroup() #foo
+        ins.beginGroup 'foo2'
+        ins.send 'bar2'
+        ins.endGroup() #foo2
+        ins.endGroup() #baz
+        ins.disconnect()
+
+      it 'should forward outmost group', () ->
+        chai.expect(groups).to.deep.eql [ 'baz' ]
+
+
+    describe 'with group hierarchy per message', () ->
+      groups = []
+      it 'should put each message in right place', (done) ->
+        out.on 'begingroup', (group) ->
+          groups.push group
+        out.on 'data', (data) ->
+          chai.expect(data).to.eql
+            baz:
+              foo: 'bar'
+              foo2: 'bar2'
+              foo3: 'bar3'
+        out.on 'disconnect', ->
+          done()
+
+        groupBy ins, ['baz', 'foo'], () ->
+          ins.send 'bar'
+        groupBy ins, ['baz', 'foo2'], () ->
+          ins.send 'bar2'
+        groupBy ins, ['baz', 'foo3'], () ->
+          ins.send 'bar3'
+        ins.disconnect()
+
+    describe 'with group hierarchy per message and level=1', () ->
+      groups = []
+      it 'should put each message in right place', (done) ->
+        out.on 'begingroup', (group) ->
+          groups.push group
+        out.on 'data', (data) ->
+          chai.expect(data).to.eql
+            foo: 'bar'
+            foo2: 'bar2'
+            foo3: 'bar3'
+        out.on 'disconnect', ->
+          done()
+
+        level.send 1
+        level.disconnect()
+
+        groupBy ins, ['baz', 'foo'], () ->
+          ins.send 'bar'
+        groupBy ins, ['baz', 'foo2'], () ->
+          ins.send 'bar2'
+        groupBy ins, ['baz', 'foo3'], () ->
+          ins.send 'bar3'
+        ins.disconnect()
