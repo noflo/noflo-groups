@@ -31,7 +31,7 @@
   "dependencies": {
     "noflo": "~0.5.0",
     "underscore": "1.7.x",
-    "node-uuid": "1.4.x"
+    "node-uuid": "1.4.3"
   },
   "devDependencies": {
     "grunt-exec": "~0.4.2",
