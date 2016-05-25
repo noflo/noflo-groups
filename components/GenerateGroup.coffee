@@ -3,7 +3,7 @@ uuid = require 'node-uuid'
 
 class GenerateGroup extends noflo.Component
 
-  description: 'Wrap IPs into a random uuid generated group'
+  description: 'Wrap IPs into a random UUID generated group'
 
   constructor: ->
     @inPorts = new noflo.InPorts
