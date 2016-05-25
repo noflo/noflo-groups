@@ -32,7 +32,7 @@ describe 'Regroup component', ->
   describe 'with a grouped connection without control packets', ->
     it 'should remove all groups', (done) ->
       expected = [
-        'data'
+        'DATA data'
       ]
       received = []
 
