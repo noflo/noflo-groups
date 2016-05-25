@@ -7,7 +7,7 @@
     "utilities"
   ],
   "author": "Kenneth Kan <kenhkan@gmail.com>",
-  "version": "0.1.0",
+  "version": "0.1.8",
   "repo": "kenhkan/groups",
   "dependencies": {
     "jashkenas/underscore": "1.8.3",
