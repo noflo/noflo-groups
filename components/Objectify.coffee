@@ -39,6 +39,7 @@ class Objectify extends noflo.Component
 
     @inPorts.in.on "endgroup", (group) =>
       @outPorts.out.endGroup()
+      @match = null
 
     @inPorts.in.on "disconnect", =>
       @outPorts.out.disconnect()
