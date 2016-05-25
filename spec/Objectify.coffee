@@ -46,7 +46,7 @@ describe 'Objectify component', ->
 
       regexp.send '^(a)'
       ins.beginGroup 'abc'
-      ins.data 'whatever'
+      ins.send 'whatever'
       ins.endGroup()
 
   describe 'with groups not matching regexp', ->
@@ -65,5 +65,5 @@ describe 'Objectify component', ->
 
       regexp.send '^(a)'
       ins.beginGroup 'xyz'
-      ins.data 'whatever'
+      ins.send 'whatever'
       ins.endGroup()
