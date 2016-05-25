@@ -37,7 +37,7 @@ describe 'CollectTree component', ->
         chai.expect(true).to.equal false
 
       err.on 'data', (data) ->
-        chai.expect(data).to.be.an 'object'
+        chai.expect(data).to.be.an 'error'
         chai.expect(c.data).to.equal null
         chai.expect(c.collectGroups.length).to.equal 0
         chai.expect(c.forwardGroups.length).to.equal 0
