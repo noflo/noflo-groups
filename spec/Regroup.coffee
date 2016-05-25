@@ -57,7 +57,7 @@ describe 'Regroup component', ->
         '< group1'
         '< group2'
         '< group3'
-        'data'
+        'DATA data'
         '>'
         '>'
         '>'
