@@ -72,10 +72,10 @@ describe 'GenerateGroup component', ->
       expected = [
         '< group1'
         '< UUID'
-        'data1'
+        'DATA data1'
         '< group2'
         '< UUID'
-        'data2'
+        'DATA data2'
         '>'
         '>'
         '>'
