@@ -7,7 +7,7 @@
     "utilities"
   ],
   "author": "Kenneth Kan <kenhkan@gmail.com>",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "contributors": [
     {
       "name": "Henri Bergius",
@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "node-uuid": "~1.4.7",
-    "noflo": "~0.5.22",
+    "noflo": "^0.5.22",
     "noflo-core": "~0.2.1",
     "underscore": "~1.8.3"
   },
@@ -42,7 +42,7 @@
     "grunt-noflo-browser": "^0.1.11",
     "grunt-noflo-manifest": "^0.1.11",
     "mocha": "^2.5.2",
-    "uuid-validate": "0.0.2"
+    "uuid-validate": "~0.0.2"
   },
   "noflo": {
     "icon": "tags",
