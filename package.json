@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "node-uuid": "~1.4.7",
-    "noflo": "^0.5.22",
+    "noflo": "^0.7.6",
     "noflo-core": "~0.2.1",
     "underscore": "~1.8.3"
   },
