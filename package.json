@@ -26,7 +26,7 @@
   "dependencies": {
     "node-uuid": "~1.4.7",
     "noflo": "0.x >= 0.5",
-    "noflo-core": "~0.2.2",
+    "noflo-core": ">=0.2.2",
     "underscore": "~1.8.3"
   },
   "devDependencies": {
