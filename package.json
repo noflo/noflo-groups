@@ -39,8 +39,8 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-phantomjs": "^4.0.0",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-noflo-browser": "^0.1.11",
-    "grunt-noflo-manifest": "^0.1.11",
+    "grunt-noflo-browser": "^1.0.1",
+    "grunt-noflo-manifest": "^0.1.12",
     "mocha": "^3.1.2",
     "uuid-validate": "~0.0.2"
   },
