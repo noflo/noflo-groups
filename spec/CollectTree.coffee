@@ -1,10 +1,11 @@
 noflo = require 'noflo'
 
 unless noflo.isBrowser()
-  chai = require 'chai' unless chai
-  CollectTree = require '../components/CollectTree.coffee'
+  chai = require 'chai'
+  path = require 'path'
+  baseDir = path.resolve __dirname, '../'
 else
-  CollectTree = require 'noflo-groups/components/CollectTree.js'
+  baseDir = 'noflo-groups'
 
 groupBy = (port, groups, func) ->
   for group in groups
@@ -19,17 +20,25 @@ describe 'CollectTree component', ->
   out = null
   err = null
   level = null
+  loader = null
 
-  beforeEach ->
-    c = CollectTree.getComponent()
-    ins = noflo.internalSocket.createSocket()
-    level = noflo.internalSocket.createSocket()
-    out = noflo.internalSocket.createSocket()
-    err = noflo.internalSocket.createSocket()
-    c.inPorts.in.attach ins
-    c.inPorts.level.attach level
-    c.outPorts.out.attach out
-    c.outPorts.error.attach err
+  before ->
+    loader = new noflo.ComponentLoader baseDir
+
+  beforeEach (done) ->
+    @timeout 4000
+    loader.load 'groups/CollectTree', (e, instance) ->
+      return done e if e
+      c = instance
+      ins = noflo.internalSocket.createSocket()
+      level = noflo.internalSocket.createSocket()
+      out = noflo.internalSocket.createSocket()
+      err = noflo.internalSocket.createSocket()
+      c.inPorts.in.attach ins
+      c.inPorts.level.attach level
+      c.outPorts.out.attach out
+      c.outPorts.error.attach err
+      done()
 
   describe 'without any groups provided', ->
     it 'should send an error and no data', (done) ->
