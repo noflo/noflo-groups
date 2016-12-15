@@ -24,10 +24,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "node-uuid": "~1.4.7",
     "noflo": "0.x >= 0.5",
     "noflo-core": ">=0.2.2",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",
