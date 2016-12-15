@@ -7,7 +7,7 @@
     "utilities"
   ],
   "author": "Kenneth Kan <kenhkan@gmail.com>",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "repo": "noflo/noflo-groups",
   "dependencies": {
     "jashkenas/underscore": "1.8.3",
