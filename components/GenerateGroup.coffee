@@ -1,5 +1,5 @@
 noflo = require 'noflo'
-uuid = require 'node-uuid'
+uuid = require 'uuid'
 
 class GenerateGroup extends noflo.Component
 
@@ -39,7 +39,7 @@ class GenerateGroup extends noflo.Component
   pushGeneratedGroup: (data) ->
     if @groups.length < 1 or
        (@groups.length > 0 and not @groups[@groups.length - 1].generated)
-      generated = { group: uuid(), generated: true }
+      generated = { group: uuid.v4(), generated: true }
       @groups.push generated
       @outPorts.out.beginGroup generated.group if @outPorts.out.isAttached()
     @outPorts.out.send data if @outPorts.out.isAttached()
