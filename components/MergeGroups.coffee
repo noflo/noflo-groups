@@ -8,6 +8,7 @@ class MergeGroups extends noflo.Component
     @inPorts = new noflo.InPorts
       in:
         datatype: 'all'
+        addressable: true
     @outPorts = new noflo.OutPorts
       out:
         datatype: 'all'
