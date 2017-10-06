@@ -44,7 +44,7 @@
     "grunt-noflo-browser": "^1.0.1",
     "grunt-noflo-manifest": "^0.1.12",
     "json-loader": "^0.5.4",
-    "mocha": "^3.1.2",
+    "mocha": "^4.0.0",
     "uuid-validate": "~0.0.2"
   },
   "noflo": {
