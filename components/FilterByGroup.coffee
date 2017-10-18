@@ -22,6 +22,7 @@ exports.getComponent = ->
   c.scopes = {}
   c.tearDown = (callback) ->
     c.scopes = {}
+    do callback
   ensureScope = (scope, idx) ->
     c.scopes[scope] = {} unless c.scopes[scope]
     return c.scopes[scope][idx] if c.scopes[scope][idx]

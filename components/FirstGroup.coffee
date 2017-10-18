@@ -12,6 +12,7 @@ exports.getComponent = ->
   c.depth = {}
   c.tearDown = (callback) ->
     c.depth = {}
+    do callback
   ensureDepth = (scope, idx) ->
     c.depth[scope] = {} unless c.depth[scope]
     c.depth[scope][idx] = 0 unless c.depth[scope][idx]

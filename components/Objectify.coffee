@@ -16,6 +16,7 @@ exports.getComponent = ->
   c.matches = {}
   c.tearDown = (callback) ->
     c.matches = {}
+    do callback
   ensureMatches = (scope, idx) ->
     c.matches[scope] = {} unless c.matches[scope]
     c.matches[scope][idx] = null unless c.matches[scope][idx]
