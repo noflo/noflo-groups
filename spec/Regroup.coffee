@@ -26,8 +26,9 @@ describe 'Regroup component', ->
   beforeEach ->
     out = noflo.internalSocket.createSocket()
     c.outPorts.out.attach out
-  afterEach ->
+  afterEach (done) ->
     c.outPorts.out.detach out
+    c.shutdown done
 
   describe 'with a grouped connection without control packets', ->
     it 'should remove all groups', (done) ->
