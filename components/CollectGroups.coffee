@@ -17,7 +17,7 @@ exports.getComponent = ->
     return unless input.hasStream 'in'
     stream = input.getStream 'in'
     if stream[0].type is 'openBracket' and stream[0].data is null
-      # Remove the surrounding brackets
+      # Remove the surrounding brackets if they're unnamed
       before = stream.shift()
       after = stream.pop()
 
