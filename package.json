@@ -7,7 +7,7 @@
     "utilities"
   ],
   "author": "Kenneth Kan <kenhkan@gmail.com>",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "contributors": [
     {
       "name": "Henri Bergius",
@@ -46,30 +46,7 @@
     "uuid-validate": "~0.0.2"
   },
   "noflo": {
-    "icon": "tags",
-    "components": {
-      "CollectGroups": "components/CollectGroups.coffee",
-      "CollectObject": "components/CollectObject.coffee",
-      "CollectTree": "components/CollectTree.coffee",
-      "FilterByGroup": "components/FilterByGroup.coffee",
-      "FirstGroup": "components/FirstGroup.coffee",
-      "GenerateGroup": "components/GenerateGroup.coffee",
-      "Group": "components/Group.coffee",
-      "GroupByObjectKey": "components/GroupByObjectKey.coffee",
-      "GroupZip": "components/GroupZip.coffee",
-      "LastGroup": "components/LastGroup.coffee",
-      "MapGroup": "components/MapGroup.coffee",
-      "MergeGroups": "components/MergeGroups.coffee",
-      "Objectify": "components/Objectify.coffee",
-      "ReadGroup": "components/ReadGroup.coffee",
-      "ReadGroups": "components/ReadGroups.coffee",
-      "Regroup": "components/Regroup.coffee",
-      "RemoveGroups": "components/RemoveGroups.coffee",
-      "SendByGroup": "components/SendByGroup.coffee"
-    },
-    "graphs": {
-      "ObjectifyByGroup": "graphs/ObjectifyByGroup.fbp"
-    }
+    "icon": "tags"
   },
   "scripts": {
     "test": "grunt test"
