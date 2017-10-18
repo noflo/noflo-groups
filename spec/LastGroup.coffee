@@ -95,3 +95,29 @@ describe 'LastGroup component', ->
       ins.endGroup()
       ins.endGroup()
       ins.disconnect()
+    it 'should send one group around two IPs', (done) ->
+      expected = [
+        '< group2'
+        'DATA data1'
+        'DATA data2'
+        '>'
+      ]
+      received = []
+
+      out.on 'begingroup', (grp) ->
+        received.push "< #{grp}"
+      out.on 'data', (data) ->
+        received.push "DATA #{data}"
+      out.on 'endgroup', ->
+        received.push '>'
+      out.on 'disconnect', ->
+        chai.expect(received).to.eql expected
+        done()
+
+      ins.beginGroup 'group1'
+      ins.beginGroup 'group2'
+      ins.send 'data1'
+      ins.send 'data2'
+      ins.endGroup()
+      ins.endGroup()
+      ins.disconnect()
