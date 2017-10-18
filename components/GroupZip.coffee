@@ -1,33 +1,22 @@
 noflo = require "noflo"
 
-class GroupZip extends noflo.Component
-  constructor: ->
-    @newGroups = []
-
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-      group:
-        datatype: 'string'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @inPorts.in.on "connect", () =>
-      @count = 0
-
-    @inPorts.in.on "data", (data) =>
-      @outPorts.out.beginGroup @newGroups[@count++]
-      @outPorts.out.send data
-      @outPorts.out.endGroup()
-
-    @inPorts.in.on "disconnect", () =>
-      @outPorts.out.disconnect()
-
-    @inPorts.group.on "connect", =>
-      @newGroups = []
-
-    @inPorts.group.on "data", (group) =>
-      @newGroups.push group
-
-exports.getComponent = -> new GroupZip
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Group packets by a group in order received'
+  c.inPorts.add 'in',
+    datatype: 'all'
+  c.inPorts.add 'group',
+    datatype: 'string'
+  c.outPorts.add 'out',
+    datatype: 'all'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.hasData 'in', 'group'
+    [data, group] = input.getData 'in', 'group'
+    output.send
+      out: new noflo.IP 'openBracket', group
+    output.send
+      out: data
+    output.send
+      out: new noflo.IP 'closeBracket', group
+    output.done()
