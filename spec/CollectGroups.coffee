@@ -11,44 +11,40 @@ describe 'CollectGroups component', ->
   c = null
   ins = null
   out = null
-  loader = null
-
-  before ->
-    loader = new noflo.ComponentLoader baseDir
-
-  beforeEach (done) ->
+  error = null
+  before (done) ->
     @timeout 4000
+    loader = new noflo.ComponentLoader baseDir
     loader.load 'groups/CollectGroups', (err, instance) ->
       return done err if err
       c = instance
       ins = noflo.internalSocket.createSocket()
       c.inPorts.in.attach ins
-      out = noflo.internalSocket.createSocket()
-      c.outPorts.out.attach out
       done()
-
+  beforeEach ->
+    out = noflo.internalSocket.createSocket()
+    c.outPorts.out.attach out
+    error = noflo.internalSocket.createSocket()
+    c.outPorts.error.attach error
   afterEach ->
     c.outPorts.out.detach out
     out = null
+    c.outPorts.error.detach error
+    error = null
 
-  describe 'when instantiated', ->
-    it 'should have input ports', ->
-      chai.expect(c.inPorts.in).to.be.an 'object'
-
-    it 'should have an output port', ->
-      chai.expect(c.outPorts.out).to.be.an 'object'
-
-  it "test no groups", (done) ->
+  it "test no brackets inside stream", (done) ->
     output = []
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
       chai.expect(output).to.deep.equal [{ $data: ["a","b","c"] }]
       done()
+    ins.beginGroup()
     ins.send "a"
     ins.send "b"
     ins.send "c"
-    ins.disconnect()
+    ins.endGroup()
 
   it "test one group", (done) ->
     output = []
@@ -56,30 +52,28 @@ describe 'CollectGroups component', ->
       g1:
         $data: ["a","b"]
       $data: ["c"]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
       chai.expect(output).to.deep.equal [expect]
       done()
+    ins.beginGroup()
     ins.beginGroup "g1"
     ins.send "a"
     ins.send "b"
     ins.endGroup()
     ins.send "c"
-    ins.disconnect()
+    ins.endGroup()
 
   it "test group named $data", (done) ->
-    chai.expect(-> ins.beginGroup "$data").to.throw "groups cannot be named '$data'"
-    done()
-
-  it "test group named $data with attached error port", (done) ->
-    err = noflo.internalSocket.createSocket()
-    c.outPorts.error.attach err
-
-    err.on 'data', (data) ->
-      chai.expect(data).to.be.ok
-      done()
+    error.on 'data', (err) ->
+      chai.expect(err).to.be.an 'error'
+      chai.expect(err.message).to.equal "groups cannot be named '$data'"
     ins.beginGroup '$data'
+    ins.send 1
+    ins.endGroup()
+    done()
 
   it "test two groups", (done) ->
     output = []
@@ -88,11 +82,13 @@ describe 'CollectGroups component', ->
         $data: ["a","b"]
       g2:
         $data: ["c","d"]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
       chai.expect(output).to.deep.equal [expect]
       done()
+    ins.beginGroup()
     ins.beginGroup "g1"
     ins.send "a"
     ins.send "b"
@@ -101,17 +97,19 @@ describe 'CollectGroups component', ->
     ins.send "c"
     ins.send "d"
     ins.endGroup()
-    ins.disconnect()
+    ins.endGroup()
 
   it "test two groups with same name", (done) ->
     output = []
     expect =
       g1: [ { $data: ["a","b"] }, { $data: ["c","d"] } ]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
       chai.expect(output).to.deep.equal [expect]
       done()
+    ins.beginGroup()
     ins.beginGroup "g1"
     ins.send "a"
     ins.send "b"
@@ -120,7 +118,7 @@ describe 'CollectGroups component', ->
     ins.send "c"
     ins.send "d"
     ins.endGroup()
-    ins.disconnect()
+    ins.endGroup()
 
   it "test nested groups", (done) ->
     output = []
@@ -129,6 +127,7 @@ describe 'CollectGroups component', ->
         $data: ["a","b"]
         g2:
           $data: ["c","d"]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
@@ -142,13 +141,13 @@ describe 'CollectGroups component', ->
     ins.endGroup()
     ins.send "b"
     ins.endGroup()
-    ins.disconnect()
 
   it "test object data", (done) ->
     output = []
     expect =
       g1:
         $data: [ {a:1,b:2}, {b:3,c:4} ]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
@@ -158,13 +157,13 @@ describe 'CollectGroups component', ->
     ins.send {a:1,b:2}
     ins.send {b:3,c:4}
     ins.endGroup()
-    ins.disconnect()
 
   it "test array data", (done) ->
     output = []
     expect =
       g1:
         $data: [ ["a","b"], ["c","d"] ]
+    error.on 'data', done
     out.on "data", (data) ->
       output.push data
     out.once "disconnect", ->
@@ -174,4 +173,3 @@ describe 'CollectGroups component', ->
     ins.send ["a","b"]
     ins.send ["c","d"]
     ins.endGroup()
-    ins.disconnect()
