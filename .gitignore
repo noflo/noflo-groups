@@ -7,3 +7,4 @@ browser/
 npm-debug.log
 components/*/
 spec/*.xml
+spec/runner.html
