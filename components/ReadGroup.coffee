@@ -30,7 +30,7 @@ exports.getComponent = ->
         groups.push packet.data
         output.send
           out: packet
-          group: packet
+          group: packet.clone()
         return
       if packet.type is 'data'
         output.send
@@ -42,6 +42,6 @@ exports.getComponent = ->
         groups.pop()
         output.send
           out: packet
-          group: packet
+          group: packet.clone()
         return
     output.done()
