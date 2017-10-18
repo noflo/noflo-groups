@@ -18,9 +18,7 @@ describe 'RemoveGroups component', ->
     loader.load 'groups/RemoveGroups', (err, instance) ->
       return done err if err
       c = instance
-      regexp = noflo.internalSocket.createSocket()
       ins = noflo.internalSocket.createSocket()
-      c.inPorts.regexp.attach regexp
       c.inPorts.in.attach ins
       done()
   beforeEach ->
@@ -41,9 +39,12 @@ describe 'RemoveGroups component', ->
         received.push "< #{grp}"
       out.on 'data', (data) ->
         received.push "DATA #{data}"
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
       out.on 'endgroup', ->
         received.push '>'
-      out.on 'disconnect', ->
+        return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
 
@@ -56,6 +57,12 @@ describe 'RemoveGroups component', ->
       ins.disconnect()
 
   describe 'with a regexp', ->
+    before ->
+      regexp = noflo.internalSocket.createSocket()
+      c.inPorts.regexp.attach regexp
+    after ->
+      c.inPorts.regexp.detach regexp
+      regexp = null
     it 'should remove matching groups', (done) ->
       expected = [
         'DATA matched'
@@ -69,9 +76,12 @@ describe 'RemoveGroups component', ->
         received.push "< #{grp}"
       out.on 'data', (data) ->
         received.push "DATA #{data}"
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
       out.on 'endgroup', ->
         received.push '>'
-      out.on 'disconnect', ->
+        return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
 
