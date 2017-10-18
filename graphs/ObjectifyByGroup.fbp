@@ -1,6 +1,6 @@
-EXPORT=OBJECTIFY.IN:IN
-EXPORT=REMOVE.OUT:OUT
-EXPORT=REGEXP.IN:REGEXP
+INPORT=Objectify.IN:IN
+INPORT=Regexp.IN:REGEXP
+OUTPORT=Remove.OUT:OUT
 
 Regexp(core/Split) OUT -> REGEXP Objectify(groups/Objectify) OUT -> IN Remove(groups/RemoveGroups)
 Regexp() OUT -> REGEXP Remove()

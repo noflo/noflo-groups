@@ -20,50 +20,44 @@ describe 'CollectTree component', ->
   out = null
   err = null
   level = null
-  loader = null
 
-  before ->
-    loader = new noflo.ComponentLoader baseDir
-
-  beforeEach (done) ->
+  before (done) ->
     @timeout 4000
+    loader = new noflo.ComponentLoader baseDir
     loader.load 'groups/CollectTree', (e, instance) ->
       return done e if e
       c = instance
       ins = noflo.internalSocket.createSocket()
-      level = noflo.internalSocket.createSocket()
-      out = noflo.internalSocket.createSocket()
-      err = noflo.internalSocket.createSocket()
       c.inPorts.in.attach ins
-      c.inPorts.level.attach level
-      c.outPorts.out.attach out
-      c.outPorts.error.attach err
       done()
+  beforeEach ->
+    out = noflo.internalSocket.createSocket()
+    err = noflo.internalSocket.createSocket()
+    c.outPorts.out.attach out
+    c.outPorts.error.attach err
+  afterEach ->
+    c.outPorts.out.detach out
+    c.outPorts.error.detach err
+    out = null
+    err = null
 
   describe 'without any groups provided', ->
     it 'should send an error and no data', (done) ->
       out.on 'data', (data) ->
-        chai.expect(true).to.equal false
-
+        done new Error 'Received unexpected data'
       err.on 'data', (data) ->
         chai.expect(data).to.be.an 'error'
-        chai.expect(c.data).to.equal null
-        chai.expect(c.collectGroups.length).to.equal 0
-        chai.expect(c.forwardGroups.length).to.equal 0
         done()
-
       ins.send 'foo'
-      ins.send 'bar'
       ins.disconnect()
 
   describe 'with a single-level group', ->
     it 'should send out an object matching the one packet', (done) ->
+      err.on 'data', done
       out.on 'data', (data) ->
         chai.expect(data).to.eql
           foo: 'bar'
-      out.on 'disconnect', ->
         done()
-
       ins.beginGroup 'foo'
       ins.send 'bar'
       ins.endGroup()
@@ -87,13 +81,14 @@ describe 'CollectTree component', ->
       out.on 'disconnect', ->
         done()
 
+      ins.beginGroup()
       ins.beginGroup 'foo'
       ins.send 'bar'
       ins.endGroup()
       ins.beginGroup 'foo'
       ins.send 'baz'
       ins.endGroup()
-      ins.disconnect()
+      ins.endGroup()
 
   describe 'with a multi-level group', ->
     it 'should send out an object matching the one packet', (done) ->
@@ -121,6 +116,7 @@ describe 'CollectTree component', ->
       out.on 'disconnect', ->
         done()
 
+      ins.beginGroup()
       ins.beginGroup 'baz'
       ins.beginGroup 'foo'
       ins.send 'bar'
@@ -130,7 +126,7 @@ describe 'CollectTree component', ->
       ins.beginGroup 'hello'
       ins.send 'world'
       ins.endGroup()
-      ins.disconnect()
+      ins.endGroup()
     it 'should send out an object matching the two packets despite endgroups', (done) ->
       out.on 'data', (data) ->
         chai.expect(data).to.eql
@@ -140,6 +136,7 @@ describe 'CollectTree component', ->
       out.on 'disconnect', ->
         done()
 
+      ins.beginGroup()
       ins.beginGroup 'baz'
       ins.beginGroup 'foo'
       ins.send 'bar'
@@ -150,10 +147,17 @@ describe 'CollectTree component', ->
       ins.send 'world'
       ins.endGroup()
       ins.endGroup()
-      ins.disconnect()
+      ins.endGroup()
 
 
     describe 'level param set to 1', () ->
+      before ->
+        level = noflo.internalSocket.createSocket()
+        c.inPorts.level.attach level
+      after ->
+        level.send 0
+        c.inPorts.level.detach level
+        level = null
       groups = []
       it 'should collect inner groups only', (done) ->
         out.on 'begingroup', (group) ->
@@ -181,7 +185,6 @@ describe 'CollectTree component', ->
       it 'should forward outmost group', () ->
         chai.expect(groups).to.deep.eql [ 'baz' ]
 
-
     describe 'with group hierarchy per message', () ->
       groups = []
       it 'should put each message in right place', (done) ->
@@ -196,15 +199,23 @@ describe 'CollectTree component', ->
         out.on 'disconnect', ->
           done()
 
+        ins.beginGroup()
         groupBy ins, ['baz', 'foo'], () ->
           ins.send 'bar'
         groupBy ins, ['baz', 'foo2'], () ->
           ins.send 'bar2'
         groupBy ins, ['baz', 'foo3'], () ->
           ins.send 'bar3'
-        ins.disconnect()
+        ins.endGroup()
 
     describe 'with group hierarchy per message and level=1', () ->
+      before ->
+        level = noflo.internalSocket.createSocket()
+        c.inPorts.level.attach level
+      after ->
+        level.send 0
+        c.inPorts.level.detach level
+        level = null
       groups = []
       it 'should put each message in right place', (done) ->
         out.on 'begingroup', (group) ->
@@ -220,10 +231,11 @@ describe 'CollectTree component', ->
         level.send 1
         level.disconnect()
 
+        ins.beginGroup()
         groupBy ins, ['baz', 'foo'], () ->
           ins.send 'bar'
         groupBy ins, ['baz', 'foo2'], () ->
           ins.send 'bar2'
         groupBy ins, ['baz', 'foo3'], () ->
           ins.send 'bar3'
-        ins.disconnect()
+        ins.endGroup()

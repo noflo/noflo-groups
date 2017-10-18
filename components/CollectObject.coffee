@@ -1,99 +1,105 @@
 noflo = require 'noflo'
 
-class CollectObject extends noflo.Component
-  description: 'Collect packets to an object identified by keys organized
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Collect packets to an object identified by keys organized
   by connection'
-
-  constructor: ->
-    @keys = []
-    @allpackets = []
-    @data = {}
-    @groups = {}
-
-    @inPorts = new noflo.InPorts
-      keys:
-        datatype: 'string'
-      allpackets:
-        datatype: 'string'
-      collect:
-        datatype: 'all'
-      release:
-        datatype: 'bang'
-      clear:
-        datatype: 'bang'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'object'
-
-    @inPorts.keys.on 'data', (key) =>
-      keys = key.split ','
+  c.inPorts.add 'keys',
+    datatype: 'string'
+    description: 'Comma-separated property names to be used for data based on connection index'
+  c.inPorts.add 'allpackets',
+    datatype: 'string'
+    description: 'Comma-separated property names to collect all packets for in an array'
+  c.inPorts.add 'collect',
+    datatype: 'all'
+    addressable: true
+    description: 'Data IPs to collect'
+  c.inPorts.add 'release',
+    datatype: 'bang'
+    description: 'Release all collected packets as an object'
+  c.inPorts.add 'clear',
+    datatype: 'bang'
+    description: 'Clear all collected data'
+  c.outPorts.add 'out',
+    datatype: 'object'
+  c.context = {}
+  c.forwardBrackets = {}
+  prepareContext = (scope) ->
+    unless c.context[scope]
+      c.context[scope] =
+        data: {}
+        groups: {}
+        keys: []
+        allpackets: []
+    return c.context[scope]
+  c.tearDown = (callback) ->
+    c.context = {}
+    do callback
+  c.process (input, output) ->
+    context = prepareContext input.scope
+    if input.hasData 'keys'
+      keys = input.getData('keys').split ','
       if keys.length > 1
-        @keys = []
-      for key in keys
-        @keys.push key
+        # Providing an array clears previous keys
+        context.keys = []
+      context.keys = context.keys.concat keys
+      output.done()
+      return
+    if input.hasData 'allpackets'
+      keys = input.getData('allpackets').split ','
+      if keys.length > 1
+        # Providing an array clears previous keys
+        context.allpackets = []
+      context.allpackets = context.allpackets.concat keys
+      output.done()
+      return
+    if input.hasData 'release'
+      input.getData 'release'
+      output.send
+        out: context.data
+      context.data = {}
+      output.done()
+      return
+    if input.hasData 'clear'
+      input.getData 'clear'
+      delete c.context[input.scope]
+      output.done()
+      return
+    indexesWithIps = input.attached('collect').filter (idx) ->
+      input.has ['collect', idx]
+    return unless indexesWithIps.length
+    # Ensure we have received keys before storing data
+    return if input.attached('keys').length and not context.keys.length
+    # Ensure we have received allpackets before storing data
+    return if input.attached('allpackets').length and not context.allpackets.length
+    indexesWithIps.forEach (idx) ->
+      packet = input.get ['collect', idx]
+      # Check that we have a named key for this connection
+      return unless context.keys[idx]
 
-    @inPorts.allpackets.on 'data', (key) =>
-      allpackets = key.split ','
-      if allpackets.length > 1
-        @keys = []
-      for key in allpackets
-        @allpackets.push key
-
-    @inPorts.collect.once 'connect', =>
-      @subscribeSockets()
-
-    @inPorts.release.on 'data', =>
-      do @release
-    @inPorts.release.on 'disconnect', =>
-      @outPorts.out.disconnect()
-    @inPorts.clear.on 'data', =>
-      do @clear
-
-  release: ->
-    @outPorts.out.send @data
-    @data = @clone @data
-
-  subscribeSockets: ->
-    # Subscribe to sockets individually
-    @inPorts.collect.sockets.forEach (socket, idx) =>
-      @subscribeSocket socket, idx
-
-  subscribeSocket: (socket, id) ->
-    socket.on 'begingroup', (group) =>
-      unless @groups[id]
-        @groups[id] = []
-      @groups[id].push group
-    socket.on 'data', (data) =>
-      return unless @keys[id]
-      groupId = @groupId @groups[id]
-      unless @data[groupId]
-        @data[groupId] = {}
-      if @allpackets.indexOf(@keys[id]) isnt -1
-        unless @data[groupId][@keys[id]]
-          @data[groupId][@keys[id]] = []
-        @data[groupId][@keys[id]].push data
+      context.groups[idx] = [] unless context.groups[idx]
+      if packet.type is 'openBracket'
+        context.groups[idx].push packet.data
         return
-      @data[groupId][@keys[id]] = data
-    socket.on 'endgroup', =>
-      return unless @groups[id]
-      @groups[id].pop()
+      if packet.type is 'data'
+        key = context.keys[idx]
+        if context.groups[idx].length
+          # First level key is the group name, if any
+          groupId = context.groups[idx][0]
+          context.data[groupId] = {} unless context.data[groupId]
+          data = context.data[groupId]
+        else
+          # Ungrouped data goes to top-level
+          data = context.data
 
-  groupId: (groups) ->
-    unless groups.length
-      return 'ungrouped'
-    groups[0]
-
-  clone: (data) ->
-    newData = {}
-    for groupName, groupedData of data
-      newData[groupName] = {}
-      for name, value of groupedData
-        continue unless groupedData.hasOwnProperty name
-        newData[groupName][name] = value
-    newData
-
-  clear: ->
-    @data = {}
-    @groups = {}
-
-exports.getComponent = -> new CollectObject
+        if context.allpackets[idx]
+          # We're collecting all packets for this connection
+          data[key] = [] unless data[key]
+          data[key].push packet.data
+          return
+        data[key] = packet.data
+        return
+      if packet.type is 'closeBracket'
+        context.groups[idx].pop()
+        return
+    output.done()

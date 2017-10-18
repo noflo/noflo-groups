@@ -1,38 +1,39 @@
-noflo = require("noflo")
+noflo = require "noflo"
 
-class RemoveGroups extends noflo.Component
-
-  description: "Remove a group given a string or a regex string"
-
-  constructor: ->
-    @regexp = null
-
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-        description: 'IPs to forward'
-      regexp:
-        datatype: 'string'
-        description: 'Regexp used to remove groups'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @inPorts.regexp.on "data", (regexp) =>
-      @regexp = new RegExp(regexp)
-
-    @inPorts.in.on "begingroup", (group) =>
-      if @regexp? and not group.match(@regexp)?
-        @outPorts.out.beginGroup(group)
-
-    @inPorts.in.on "data", (data) =>
-      @outPorts.out.send(data)
-
-    @inPorts.in.on "endgroup", (group) =>
-      if @regexp? and not group.match(@regexp)?
-        @outPorts.out.endGroup()
-
-    @inPorts.in.on "disconnect", =>
-      @outPorts.out.disconnect()
-
-exports.getComponent = -> new RemoveGroups
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = "Remove groups matching a string or a regex string, or all if no regexp given"
+  c.inPorts.add 'in',
+    datatype: 'all'
+    description: 'IPs to forward'
+  c.inPorts.add 'regexp',
+    datatype: 'string'
+    description: 'Regexp used to remove groups'
+    control: true
+  c.outPorts.add 'out',
+    datatype: 'all'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.has 'in'
+    return if input.attached('regexp').length and not input.hasData 'regexp'
+    regexp = null
+    if input.hasData 'regexp'
+      regexp = new RegExp input.getData 'regexp'
+    packet = input.get 'in'
+    if packet.type in ['openBracket', 'closeBracket']
+      unless regexp
+        # No regexp given, remove all brackets
+        output.done()
+        return
+      if typeof packet.data is 'string' and packet.data.match(regexp)
+        # Matches regexp, remove
+        output.done()
+        return
+      # Doesn't match regexp, send
+      output.sendDone
+        out: packet
+      return
+    if packet.type is 'data'
+      output.sendDone
+        out: packet
+      return

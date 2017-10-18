@@ -50,7 +50,7 @@ describe 'GroupZip component', ->
         received.push "DATA #{data}"
       out.on 'endgroup', ->
         received.push '>'
-      out.on 'disconnect', ->
+        return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
 

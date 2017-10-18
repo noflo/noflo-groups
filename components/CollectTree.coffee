@@ -1,79 +1,80 @@
 noflo = require 'noflo'
 
-class CollectTree extends noflo.Component
-  description: 'Collect grouped packets into a simple tree structure
-  and send on disconnect'
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Collect a stream of packets into a simple tree structure'
+  c.inPorts.add 'in',
+    datatype: 'all'
+  c.inPorts.add 'level',
+    datatype: 'integer'
+    default: 0
+    description: 'Number of groups (from outermost) to skip collection of'
+    control: true
+  c.outPorts.add 'out',
+    datatype: 'object'
+  c.outPorts.add 'error',
+    datatype: 'object'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.hasStream 'in'
+    return if input.attached('level').length and not input.hasData 'level'
 
-  constructor: ->
-    @data = null
-    @collectGroups = []
-    @forwardGroups = []
-    @level = 0
-    @currentLevel = 0
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-      level:
-        datatype: 'integer'
-        default: 0
-        description: 'Number of groups (from outermost) to skip collection of'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-      error:
-        datatype: 'object'
+    level = if input.hasData('level') then input.getData('level') else 0
 
-    @inPorts.level.on 'data', (data) =>
-      @level = data
+    stream = input.getStream 'in'
+    if stream[0].type is 'openBracket' and stream[0].data is null
+      # Remove the surrounding brackets if they're unnamed
+      before = stream.shift()
+      after = stream.pop()
 
-    @inPorts.in.on 'connect', =>
-      @data = {}
-    @inPorts.in.on 'begingroup', (group) =>
-      if @currentLevel < @level
-        @forwardGroups.push group
-      else
-        @collectGroups.push group
-      @currentLevel += 1
-    @inPorts.in.on 'data', (data) =>
-      return unless @collectGroups.length
-      d = @data
-      for g, idx in @collectGroups
-        if idx < @collectGroups.length - 1
-          d[g] = {} unless d[g]
-          d = d[g]
+    data = {}
+    currentLevel = 0
+    collectGroups = []
+    forwardGroups = []
+
+    for packet in stream
+      if packet.type is 'openBracket'
+        if currentLevel < level
+          forwardGroups.push packet.data
+        else
+          collectGroups.push packet.data
+        currentLevel += 1
+        continue
+      if packet.type is 'data'
+        continue unless collectGroups.length
+        d = data
+        for g, idx in collectGroups
+          if idx < collectGroups.length - 1
+            d[g] = {} unless d[g]
+            d = d[g]
+            continue
+        unless d[g]
+          d[g] = packet.data
           continue
-      unless d[g]
-        d[g] = data
-        return
-      unless Array.isArray d[g]
-        d[g] = [d[g]]
-      d[g].push data
-    @inPorts.in.on 'endgroup', (group) =>
-      if @currentLevel < @level
-        # will be sent & reset on disconnect
-      else
-        @collectGroups.pop()
-      @currentLevel -= 1
-    @inPorts.in.on 'disconnect', =>
-      @collectGroups = []
-      if Object.keys(@data).length
+        unless Array.isArray d[g]
+          d[g] = [d[g]]
+        d[g].push packet.data
+        continue
+      if packet.type is 'closeBracket'
+        if currentLevel < level
+          # will be sent & reset on disconnect
+        else
+          collectGroups.pop()
+        currentLevel -= 1
+        continue
 
-        for group in @forwardGroups
-          @outPorts.out.beginGroup group
-        @outPorts.out.send @data
-        for group in @forwardGroups
-          @outPorts.out.endGroup()
-        @outPorts.out.disconnect()
-        @forwardGroups = []
-        @data = null
-        return
+    unless Object.keys(data).length
+      output.done new Error 'No tree information was collected'
+      return
 
-      @data = null
-      err = new Error 'No tree information was collected'
-      if @outPorts.error.isAttached()
-        @outPorts.error.send err
-        @outPorts.error.disconnect()
-        return
-      throw err
-
-exports.getComponent = -> new CollectTree
+    for group in forwardGroups
+      output.send
+        out: new noflo.IP 'openBracket', group
+    output.send
+      out: data
+    forwardGroups.reverse()
+    for group in forwardGroups
+      output.send
+        out: new noflo.IP 'closeBracket', group
+    output.done()
+    return

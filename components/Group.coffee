@@ -1,46 +1,33 @@
 noflo = require "noflo"
 
-class Group extends noflo.Component
-  description: 'Add groups to a packet'
-  constructor: ->
-    @newGroups = []
-
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-        description: 'IPs to forward'
-      group:
-        datatype: 'string'
-        description: 'Groups to encapsulate incoming packets into'
-      clear:
-        datatype: 'bang'
-        description: 'Clear encapsulating groups'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-        description: 'Forwarded IPs with encapsulating groups'
-
-    @inPorts.in.on "connect", () =>
-      @outPorts.out.beginGroup group for group in @newGroups
-
-    @inPorts.in.on "begingroup", (group) =>
-      @outPorts.out.beginGroup group
-
-    @inPorts.in.on "data", (data) =>
-      @outPorts.out.send data
-
-    @inPorts.in.on "endgroup", (group) =>
-      @outPorts.out.endGroup()
-
-    @inPorts.in.on "disconnect", () =>
-      @outPorts.out.endGroup() for group in @newGroups
-      @outPorts.out.disconnect()
-
-    @inPorts.group.on "connect", =>
-      @newGroups = []
-
-    @inPorts.group.on "data", (group) =>
-      groups = group.split ':'
-      @newGroups.push group for group in groups
-
-exports.getComponent = -> new Group
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Surround data IPs brackets'
+  c.inPorts.add 'in',
+    datatype: 'all'
+    description: 'IPs to forward'
+  c.inPorts.add 'group',
+    datatype: 'string'
+    description: 'Groups to encapsulate incoming packets into'
+    control: true
+  c.outPorts.add 'out',
+    datatype: 'all'
+    description: 'Forwarded IPs with encapsulating groups'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.hasData 'in', 'group'
+    [data, group] = input.getData 'in', 'group'
+    if Array.isArray group
+      brackets = group.slice 0
+    else
+      brackets = group.split ':'
+    for bracket in brackets
+      output.send
+        out: new noflo.IP 'openBracket', bracket
+    output.send
+      out: data
+    brackets.reverse()
+    for bracket in brackets
+      output.send
+        out: new noflo.IP 'closeBracket', bracket
+    output.done()

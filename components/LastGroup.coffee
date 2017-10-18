@@ -1,46 +1,50 @@
 noflo = require 'noflo'
 
-class LastGroup extends noflo.Component
-  description: 'Forward packets wrapped only using the latest emitted
-  group'
-  constructor: ->
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-        description: 'IPs to forward'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @groups = []
-    @groupSent = 0
-
-    @inPorts.in.on 'begingroup', (group) =>
-      @storeGroup group
-    @inPorts.in.on 'data', (data) =>
-      @sendBeginGroup()
-      @outPorts.out.send data if @outPorts.out.isAttached()
-    @inPorts.in.on 'endgroup', (group) =>
-      @sendEndGroup()
-    @inPorts.in.on 'disconnect', =>
-      @outPorts.out.disconnect() if @outPorts.out.isConnected()
-
-  storeGroup: (group) ->
-    @groups.push { name: group, emitted: false }
-
-  sendBeginGroup: () ->
-    return unless @groups.length > 0
-    group = @groups[@groups.length - 1]
-    return if group.emitted
-    group.emitted = true
-    @outPorts.out.beginGroup group.name if @outPorts.out.isAttached()
-
-  sendEndGroup: () ->
-    group = @groups.pop()
-    return unless group.emitted
-    @outPorts.out.endGroup() if @outPorts.out.isAttached()
-
-  clearGroups: () ->
-    @groups = []
-
-exports.getComponent = -> new LastGroup
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Forward incoming IPs and filter groups except the last one'
+  c.inPorts.add 'in',
+    datatype: 'all'
+    description: 'IPs to forward'
+    addressable: true
+  c.outPorts.add 'out',
+    datatype: 'all'
+  c.depth = {}
+  c.tearDown = (callback) ->
+    c.depth = {}
+    do callback
+  ensureDepth = (scope, idx) ->
+    c.depth[scope] = {} unless c.depth[scope]
+    return c.depth[scope][idx] if c.depth[scope][idx]
+    c.depth[scope][idx] = []
+    return c.depth[scope][idx]
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    indexesWithIps = input.attached('in').filter (idx) ->
+      input.has ['in', idx]
+    return unless indexesWithIps.length
+    indexesWithIps.forEach (idx) ->
+      depth = ensureDepth input.scope, idx
+      packet = input.get ['in', idx]
+      if packet.type is 'openBracket'
+        depth.push
+          group: packet.data
+          hasData: false
+        return
+      if packet.type is 'data'
+        if depth.length
+          lastLevel = depth[depth.length - 1]
+          unless lastLevel.hasData
+            output.send
+              out: new noflo.IP 'openBracket', lastLevel.group
+            lastLevel.hasData = true
+        output.send
+          out: packet
+        return
+      if packet.type is 'closeBracket'
+        lastLevel = depth.pop()
+        return unless lastLevel.hasData
+        output.send
+          out: new noflo.IP 'closeBracket', lastLevel.group
+        return
+    output.done()

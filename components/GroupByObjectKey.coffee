@@ -1,61 +1,33 @@
 noflo = require 'noflo'
 
-class GroupByObjectKey extends noflo.Component
-  constructor: ->
-    @data = []
-    @key = null
-
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-      key:
-        datatype: 'string'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @inPorts.in.on 'connect', =>
-      @data = []
-    @inPorts.in.on 'begingroup', (group) =>
-      @outPorts.out.beginGroup group
-    @inPorts.in.on 'data', (data) =>
-      return @getKey data if @key
-      @data.push data
-    @inPorts.in.on 'endgroup', =>
-      @outPorts.out.endGroup()
-    @inPorts.in.on 'disconnect', =>
-      unless @data.length
-        # Data already sent
-        @outPorts.out.disconnect()
-        return
-
-      # No key, data will be sent when we get it
-      return unless @key
-
-      # Otherwise send data we have an disconnect
-      @getKey data for data in @data
-      @outPorts.out.disconnect()
-
-    @inPorts.key.on 'data', (data) =>
-      @key = data
-    @inPorts.key.on 'disconnect', =>
-      return unless @data.length
-
-      @getKey data for data in @data
-      @outPorts.out.disconnect()
-
-  getKey: (data) ->
-    throw new Error 'Key not defined' unless @key
-    throw new Error 'Data is not an object' unless typeof data is 'object'
-
-    group = data[@key]
-    unless typeof data[@key] is 'string'
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Group IPs by a key in their payload'
+  c.inPorts.add 'in',
+    datatype: 'object'
+  c.inPorts.add 'key',
+    datatype: 'string'
+    control: true
+  c.outPorts.add 'out',
+    datatype: 'object'
+  c.outPorts.add 'error',
+    datatype: 'object'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.hasData 'in', 'key'
+    [data, key] = input.getData 'in', 'key'
+    unless typeof data is 'object'
+      output.done new Error 'Data is not an object'
+      return
+    group = data[key]
+    unless typeof data[key] is 'string'
       group = 'undefined'
-    if typeof data[@key] is 'boolean'
-      group = @key if data[@key]
-
-    @outPorts.out.beginGroup group
-    @outPorts.out.send data
-    @outPorts.out.endGroup()
-
-exports.getComponent = -> new GroupByObjectKey
+    if typeof data[key] is 'boolean'
+      group = key if data[key]
+    output.send
+      out: new noflo.IP 'openBracket', group
+    output.send
+      out: data
+    output.send
+      out: new noflo.IP 'closeBracket', group
+    output.done()

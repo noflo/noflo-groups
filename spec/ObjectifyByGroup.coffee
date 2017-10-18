@@ -7,78 +7,76 @@ unless noflo.isBrowser()
 else
   baseDir = 'noflo-groups'
 
-describe 'Regroup component', ->
+describe 'ObjectifyByGroup component', ->
   c = null
-  group = null
+  regexp = null
   ins = null
   out = null
   before (done) ->
     @timeout 4000
     loader = new noflo.ComponentLoader baseDir
-    loader.load 'groups/Regroup', (err, instance) ->
+    loader.load 'groups/ObjectifyByGroup', (err, instance) ->
       return done err if err
       c = instance
-      group = noflo.internalSocket.createSocket()
+      regexp = noflo.internalSocket.createSocket()
       ins = noflo.internalSocket.createSocket()
-      c.inPorts.group.attach group
+      c.inPorts.regexp.attach regexp
       c.inPorts.in.attach ins
       done()
   beforeEach ->
     out = noflo.internalSocket.createSocket()
     c.outPorts.out.attach out
-  afterEach (done) ->
+  afterEach ->
     c.outPorts.out.detach out
-    c.shutdown done
 
-  describe 'with a grouped connection without control packets', ->
-    it 'should remove all groups', (done) ->
+  describe 'with groups matching regexp', ->
+    it 'should make an object and remove groups', (done) ->
       expected = [
-        'DATA data'
+        {
+          a: 'whatever'
+        }
       ]
       received = []
-
       out.on 'begingroup', (grp) ->
         received.push "< #{grp}"
       out.on 'data', (data) ->
-        received.push "DATA #{data}"
+        received.push data
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
       out.on 'endgroup', ->
         received.push '>'
-      out.on 'disconnect', ->
+        return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
 
-      ins.beginGroup 'group'
-      ins.send 'data'
+      regexp.send '^(a)'
+      ins.beginGroup 'abc'
+      ins.send 'whatever'
       ins.endGroup()
-      ins.disconnect()
 
-  describe 'with replacement groups', ->
-    it 'should replace the groups around the packet', (done) ->
+  describe 'with groups not matching regexp', ->
+    it 'should send packet as-is and retain groups', (done) ->
       expected = [
-        '< group1'
-        '< group2'
-        '< group3'
-        'DATA data'
-        '>'
-        '>'
+        '< xyz'
+        'whatever'
         '>'
       ]
       received = []
-
       out.on 'begingroup', (grp) ->
         received.push "< #{grp}"
       out.on 'data', (data) ->
-        received.push "DATA #{data}"
+        received.push data
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
       out.on 'endgroup', ->
         received.push '>'
-      out.on 'disconnect', ->
+        return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
 
-      group.send 'group1'
-      group.send 'group2'
-      group.send 'group3'
-      ins.beginGroup 'group'
-      ins.send 'data'
+      regexp.send '^(a)'
+      ins.beginGroup 'xyz'
+      ins.send 'whatever'
       ins.endGroup()
-      ins.disconnect()

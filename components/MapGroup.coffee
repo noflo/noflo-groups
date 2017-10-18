@@ -1,58 +1,63 @@
 noflo = require 'noflo'
 
-class MapGroup extends noflo.Component
-  constructor: ->
-    @map = {}
-    @regexps = {}
-
-    @inPorts = new noflo.InPorts
-      map:
-        datatype: 'all'
-      regexp:
-        datatype: 'all'
-      in:
-        datatype: 'all'
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @inPorts.map.on 'data', (data) =>
-      @prepareMap data
-    @inPorts.regexp.on 'data', (data) =>
-      @prepareRegExp data
-
-    @inPorts.in.on 'begingroup', (group) =>
-      @mapGroup group
-    @inPorts.in.on 'data', (data) =>
-      @outPorts.out.send data
-    @inPorts.in.on 'endgroup', =>
-      @outPorts.out.endGroup()
-    @inPorts.in.on 'disconnect', =>
-      @outPorts.out.disconnect()
-
-  prepareMap: (map) ->
-    if typeof map is 'object'
-      @map = map
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Replace groups based on static or regexp map'
+  c.inPorts.add 'map',
+    datatype: 'all'
+    control: true
+  c.inPorts.add 'regexp',
+    datatype: 'all'
+    control: true
+  c.inPorts.add 'in',
+    datatype: 'all'
+  c.outPorts.add 'out',
+    datatype: 'all'
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    return unless input.has 'in'
+    return if input.attached('map').length and not input.hasData 'map'
+    return if input.attached('regexp').length and not input.hasData 'regexp'
+    map = {}
+    regexp = {}
+    if input.hasData 'map'
+      mapData = input.getData 'map'
+      if typeof mapData is 'object'
+        map = mapData
+      else
+        mapParts = mapData.split '='
+        map[mapParts[0]] = mapParts[1]
+    if input.hasData 'regexp'
+      regexpData = input.getData 'regexp'
+      if typeof regexpData is 'object'
+        regexp = regexpData
+      else
+        regexpParts = regexpData.split '='
+        regexp[regexpParts[0]] = regexpParts[1]
+    packet = input.get 'in'
+    if packet.type is 'data'
+      output.sendDone
+        out: packet
       return
+    if packet.type in ['openBracket', 'closeBracket']
+      unless typeof packet.data is 'string'
+        output.sendDone
+          out: packet
+        return
 
-    mapParts = map.split '='
-    @map[mapParts[0]] = mapParts[1]
+      if map[packet.data]
+        # Direct mapping
+        output.sendDone
+          out: new noflo.IP packet.type, map[packet.data]
+        return
 
-  prepareRegExp: (map) ->
-    mapParts = map.split '='
-    @regexps[mapParts[0]] = mapParts[1]
-
-  mapGroup: (group) ->
-    if @map[group]
-      @outPorts.out.beginGroup @map[group]
+      group = packet.data
+      for expression, replacement of regexp
+        exp = new RegExp expression
+        matched = exp.exec group
+        continue unless matched
+        group = group.replace exp, replacement
+      output.sendDone
+        out: new noflo.IP packet.type, group
       return
-
-    for expression, replacement of @regexps
-      regexp = new RegExp expression
-      matched = regexp.exec group
-      continue unless matched
-      group = group.replace regexp, replacement
-
-    @outPorts.out.beginGroup group
-
-exports.getComponent = -> new MapGroup
+    output.done()

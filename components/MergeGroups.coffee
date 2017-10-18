@@ -1,61 +1,50 @@
 noflo = require 'noflo'
-{_} = require 'underscore'
 
-class MergeGroups extends noflo.Component
-  constructor: ->
-    @groups = {}
-    @data = {}
-    @inPorts = new noflo.InPorts
-      in:
-        datatype: 'all'
-        addressable: true
-    @outPorts = new noflo.OutPorts
-      out:
-        datatype: 'all'
-
-    @inPorts.in.on 'begingroup', (group, socket) =>
-      @addGroup socket, group
-    @inPorts.in.on 'data', (data, socket) =>
-      @registerData socket, data
-      @checkBuffer socket
-    @inPorts.in.on 'endgroup', (group, socket) =>
-      @checkBuffer socket
-      @removeGroup socket
-    @inPorts.in.on 'disconnect', (socket, socketId) =>
-      @checkBuffer socketId
-
-  addGroup: (socket, group) ->
-    unless @groups[socket]
-      @groups[socket] = []
-    @groups[socket].push group
-
-  removeGroup: (socket) ->
-    @groups[socket].pop()
-
-  groupId: (socket) ->
-    return null unless @groups[socket]
-    @groups[socket].join ':'
-
-  registerData: (socket, data) ->
-    id = @groupId socket
-    unless id
-      return
-    unless @data[id]
-      @data[id] = {}
-    @data[id][socket] = data
-
-  checkBuffer: (socket) ->
-    id = @groupId socket
-    return unless id
-    return unless @data[id]
-
-    for socket, socketId in @inPorts.in.sockets
-      return unless @data[id][socketId]
-
-    @outPorts.out.beginGroup id
-    @outPorts.out.send @data[id]
-    @outPorts.out.endGroup()
-    @outPorts.out.disconnect()
-    delete @data[id]
-
-exports.getComponent = -> new MergeGroups
+exports.getComponent = ->
+  c = new noflo.Component
+  c.description = 'Flatten group tree to a single level'
+  c.inPorts.add 'in',
+    datatype: 'all'
+    description: 'IPs to forward'
+    addressable: true
+  c.outPorts.add 'out',
+    datatype: 'all'
+  c.depth = {}
+  c.tearDown = (callback) ->
+    c.depth = {}
+    do callback
+  ensureDepth = (scope, idx) ->
+    c.depth[scope] = {} unless c.depth[scope]
+    return c.depth[scope][idx] if c.depth[scope][idx]
+    c.depth[scope][idx] =
+      groups: []
+      dataGroups: []
+    return c.depth[scope][idx]
+  c.forwardBrackets = {}
+  c.process (input, output) ->
+    indexesWithIps = input.attached('in').filter (idx) ->
+      input.has ['in', idx]
+    return unless indexesWithIps.length
+    indexesWithIps.forEach (idx) ->
+      depth = ensureDepth input.scope, idx
+      packet = input.get ['in', idx]
+      if packet.type is 'openBracket'
+        # Ignore brackets arriving after data was sent
+        depth.groups.push packet.data
+        return
+      if packet.type is 'data'
+        if depth.groups.length and not depth.dataGroups.length
+          depth.dataGroups = depth.groups.slice 0
+          output.send
+            out: new noflo.IP 'openBracket', depth.dataGroups.join ':'
+        output.send
+          out: packet
+        return
+      if packet.type is 'closeBracket'
+        if depth.groups.join(':') is depth.dataGroups.join ':'
+          output.send
+            out: new noflo.IP 'closeBracket', depth.dataGroups.join ':'
+          depth.dataGroups = []
+        depth.groups.pop()
+        return
+    output.done()

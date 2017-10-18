@@ -7,15 +7,14 @@ unless noflo.isBrowser()
 else
   baseDir = 'noflo-groups'
 
-describe 'RemoveGroups component', ->
+describe 'MergeGroups component', ->
   c = null
-  regexp = null
   ins = null
   out = null
   before (done) ->
     @timeout 4000
     loader = new noflo.ComponentLoader baseDir
-    loader.load 'groups/RemoveGroups', (err, instance) ->
+    loader.load 'groups/MergeGroups', (err, instance) ->
       return done err if err
       c = instance
       ins = noflo.internalSocket.createSocket()
@@ -26,17 +25,15 @@ describe 'RemoveGroups component', ->
     c.outPorts.out.attach out
   afterEach ->
     c.outPorts.out.detach out
-
-  describe 'with no regexp', ->
-    it 'should remove all groups', (done) ->
+    out = null
+  describe 'receiving an un-bracketed packet', ->
+    it 'should send it out as-is', (done) ->
       expected = [
-        'DATA matched'
-        'DATA unmatched'
+        'DATA a'
       ]
       received = []
-
-      out.on 'begingroup', (grp) ->
-        received.push "< #{grp}"
+      out.on 'begingroup', (group) ->
+        received.push "< #{group}"
       out.on 'data', (data) ->
         received.push "DATA #{data}"
         return unless received.length is expected.length
@@ -47,33 +44,18 @@ describe 'RemoveGroups component', ->
         return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
-
-      ins.beginGroup 'abcd'
-      ins.send 'matched'
-      ins.endGroup()
-      ins.beginGroup 'wxyz'
-      ins.send 'unmatched'
-      ins.endGroup()
-      ins.disconnect()
-
-  describe 'with a regexp', ->
-    before ->
-      regexp = noflo.internalSocket.createSocket()
-      c.inPorts.regexp.attach regexp
-    after ->
-      c.inPorts.regexp.detach regexp
-      regexp = null
-    it 'should remove matching groups', (done) ->
+      ins.send 'a'
+  describe 'receiving a stream', ->
+    it 'should send it out as-is', (done) ->
       expected = [
-        'DATA matched'
-        '< wxyz'
-        'DATA unmatched'
+        '< foo'
+        'DATA a'
+        'DATA b'
         '>'
       ]
       received = []
-
-      out.on 'begingroup', (grp) ->
-        received.push "< #{grp}"
+      out.on 'begingroup', (group) ->
+        received.push "< #{group}"
       out.on 'data', (data) ->
         received.push "DATA #{data}"
         return unless received.length is expected.length
@@ -84,13 +66,38 @@ describe 'RemoveGroups component', ->
         return unless received.length is expected.length
         chai.expect(received).to.eql expected
         done()
-
-      regexp.send 'abc'
-
-      ins.beginGroup 'abcd'
-      ins.send 'matched'
+      ins.beginGroup 'foo'
+      ins.send 'a'
+      ins.send 'b'
       ins.endGroup()
-      ins.beginGroup 'wxyz'
-      ins.send 'unmatched'
+      ins.disconnect()
+  describe 'receiving a stream with substreams', ->
+    it 'should flatten the stream to one level', (done) ->
+      expected = [
+        '< foo:bar'
+        'DATA a'
+        'DATA b'
+        '>'
+      ]
+      received = []
+      out.on 'begingroup', (group) ->
+        received.push "< #{group}"
+      out.on 'data', (data) ->
+        received.push "DATA #{data}"
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
+      out.on 'endgroup', ->
+        received.push '>'
+        return unless received.length is expected.length
+        chai.expect(received).to.eql expected
+        done()
+      ins.beginGroup 'foo'
+      ins.beginGroup 'bar'
+      ins.send 'a'
+      ins.beginGroup 'baz'
+      ins.send 'b'
+      ins.endGroup()
+      ins.endGroup()
       ins.endGroup()
       ins.disconnect()
