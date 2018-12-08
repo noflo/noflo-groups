@@ -1,12 +1,3 @@
-noflo = require 'noflo'
-
-unless noflo.isBrowser()
-  chai = require 'chai'
-  path = require 'path'
-  baseDir = path.resolve __dirname, '../'
-else
-  baseDir = 'noflo-groups'
-
 groupBy = (port, groups, func) ->
   for group in groups
     port.beginGroup group

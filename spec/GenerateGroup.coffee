@@ -1,12 +1,6 @@
-noflo = require 'noflo'
-
 unless noflo.isBrowser()
-  chai = require 'chai'
-  path = require 'path'
   validateUuid = require 'uuid-validate'
-  baseDir = path.resolve __dirname, '../'
 else
-  baseDir = 'noflo-groups'
   validateUuid = null
 
 describe 'GenerateGroup component', ->
