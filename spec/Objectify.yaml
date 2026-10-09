@@ -1,0 +1,10 @@
+topic: groups/Objectify
+cases:
+  - name: passing data through without a matching group
+    assertion: should send the packet as-is
+    inputs:
+      regexp: "^(a)"
+      in: "hello"
+    expect:
+      out:
+        equals: "hello"

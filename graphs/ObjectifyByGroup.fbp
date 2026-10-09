@@ -1,8 +1,8 @@
-INPORT=Objectify.IN:IN
-INPORT=Regexp.IN:REGEXP
-OUTPORT=Remove.OUT:OUT
+INPORT=Objectify.in:in
+INPORT=Regexp.in:regexp
+OUTPORT=Remove.out:out
 
 # @description Convert only group structure matching regexp to object
 
-Regexp(core/Split) OUT -> REGEXP Objectify(groups/Objectify) OUT -> IN Remove(groups/RemoveGroups)
-Regexp() OUT -> REGEXP Remove()
+Regexp(core/Split) out -> regexp Objectify(groups/Objectify) out -> in Remove(groups/RemoveGroups)
+Regexp(core/Split) out -> regexp Remove(groups/RemoveGroups)

@@ -1,0 +1,10 @@
+topic: groups/MapGroup
+cases:
+  - name: passing ungrouped data through
+    assertion: should send data as-is
+    inputs:
+      map: "foo=bar"
+      in: "hello"
+    expect:
+      out:
+        equals: "hello"

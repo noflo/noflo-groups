@@ -1,0 +1,22 @@
+topic: groups/CollectObject
+cases:
+  - name: collecting a keyed connection
+    assertion: should release the collected object
+    inputs:
+      keys: "foo"
+      collect: "hello"
+      release: true
+    expect:
+      out:
+        equals:
+          foo: "hello"
+  - name: clearing collected data
+    assertion: should release an empty object after clear
+    inputs:
+      keys: "foo"
+      collect: "hello"
+      clear: true
+      release: true
+    expect:
+      out:
+        equals: {}

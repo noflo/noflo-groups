@@ -1,0 +1,11 @@
+topic: groups/GroupByObjectKey
+cases:
+  - name: rejecting a non-object payload
+    assertion: should send an error
+    inputs:
+      key: "name"
+      in: "not an object"
+    expect:
+      error:
+        path: $.message
+        contains: not an object
