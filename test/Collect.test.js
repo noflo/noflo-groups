@@ -33,7 +33,7 @@ describe("CollectGroups component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ $data: ["a", "b", "c"] }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects one group", () => {
@@ -49,7 +49,7 @@ describe("CollectGroups component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ g1: { $data: ["a", "b"] }, $data: ["c"] }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("rejects a group named $data", () => {
@@ -62,7 +62,7 @@ describe("CollectGroups component", () => {
       /** @type {Error} */ (errorIps[0].data).message,
       "groups cannot be named '$data'",
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects two groups", () => {
@@ -81,7 +81,7 @@ describe("CollectGroups component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ g1: { $data: ["a", "b"] }, g2: { $data: ["c", "d"] } }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collates two same-named groups into an array", () => {
@@ -100,7 +100,7 @@ describe("CollectGroups component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ g1: [{ $data: ["a", "b"] }, { $data: ["c", "d"] }] }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects nested groups", () => {
@@ -117,7 +117,7 @@ describe("CollectGroups component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ g1: { $data: ["a", "b"], g2: { $data: ["c", "d"] } } }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects object data", () => {
@@ -143,7 +143,7 @@ describe("CollectGroups component", () => {
         },
       ],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects array data", () => {
@@ -169,7 +169,7 @@ describe("CollectGroups component", () => {
         },
       ],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -206,7 +206,7 @@ describe("CollectTree component", () => {
       /** @type {Error} */ (errorIps[0].data).message,
       "No tree information was collected",
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects a single-level group", () => {
@@ -216,7 +216,7 @@ describe("CollectTree component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ foo: "bar" }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects two packets under one group into an array", () => {
@@ -226,7 +226,7 @@ describe("CollectTree component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ foo: ["bar", "baz"] }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects two same-named groups despite a surrounding unnamed group", () => {
@@ -243,7 +243,7 @@ describe("CollectTree component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ foo: ["bar", "baz"] }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects multi-level groups", () => {
@@ -253,7 +253,7 @@ describe("CollectTree component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ baz: { foo: "bar" } }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("forwards outer groups above the level control", () => {
@@ -262,7 +262,7 @@ describe("CollectTree component", () => {
     sendGrouped(inSocket, ["outer", "inner"], ["a"]);
     // level=1: 'outer' forwarded, 'inner' collected
     assert.deepEqual(rendered(outIps), ["< outer", 'DATA {"inner":"a"}', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -327,7 +327,7 @@ describe("CollectObject component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ name: "foo", value: 42 }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("collects arrays for allpackets connections", () => {
@@ -350,7 +350,7 @@ describe("CollectObject component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ name: ["foo"], value: "two" }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("uses the first-level group as key", () => {
@@ -366,7 +366,7 @@ describe("CollectObject component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{ g1: { name: "foo" } }],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("clears collected data", () => {
@@ -384,7 +384,7 @@ describe("CollectObject component", () => {
       outIps.filter((ip) => ip.type === "data").map((ip) => ip.data),
       [{}],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -426,7 +426,7 @@ describe("SendByGroup component", () => {
     dataSocket.post(new noflo.IP("data", "payload"));
     inSocket.post(new noflo.IP("data", null));
     assert.deepEqual(rendered(outIps), ['DATA "payload"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("does not release on an unrelated group bang", () => {
@@ -434,7 +434,7 @@ describe("SendByGroup component", () => {
     sendGrouped(dataSocket, ["g1"], ["payload"]);
     inSocket.post(new noflo.IP("data", null));
     assert.deepEqual(rendered(outIps), []);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("releases the packet grouped by its storage groups", () => {
@@ -444,7 +444,7 @@ describe("SendByGroup component", () => {
     inSocket.post(new noflo.IP("data", null));
     inSocket.post(new noflo.IP("closeBracket", "g1"));
     assert.deepEqual(rendered(outIps), ["< g1", 'DATA "payload"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("releases immediately when the bang was already received", () => {
@@ -454,7 +454,7 @@ describe("SendByGroup component", () => {
     inSocket.post(new noflo.IP("closeBracket", "g1"));
     sendGrouped(dataSocket, ["g1"], ["payload"]);
     assert.deepEqual(rendered(outIps), ["< g1", 'DATA "payload"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("releases the ungrouped packet on an ungrouped bang", () => {
@@ -465,6 +465,6 @@ describe("SendByGroup component", () => {
     // 'ungrouped' identifier matches the plain data; the grouped one
     // stays stored
     assert.deepEqual(rendered(outIps), ['DATA "first"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });

@@ -31,7 +31,7 @@ describe("ReadGroup component", () => {
     inSocket.post(new noflo.IP("openBracket", "foo"));
     inSocket.post(new noflo.IP("data", "hello"));
     assert.equal(groupIps[0].data, "foo");
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("reads nested groups as a colon trail", async () => {
@@ -45,7 +45,7 @@ describe("ReadGroup component", () => {
       groupIps.map((ip) => ip.data),
       ["foo", "bar", "foo:bar"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("forwards brackets on out with the trail closing", () => {
@@ -57,7 +57,7 @@ describe("ReadGroup component", () => {
     // The group port receives clones of the bracket packets
     assert.equal(groupIps[0].type, "openBracket");
     assert.equal(groupIps[groupIps.length - 1].type, "closeBracket");
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -111,7 +111,7 @@ describe("ReadGroups component", () => {
       groupIps.map((ip) => ip.data),
       ["foo", "bar"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("strips brackets when strip is true", () => {
@@ -125,7 +125,7 @@ describe("ReadGroups component", () => {
       groupIps.map((ip) => ip.data),
       ["foo"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("forwards bracket levels above the threshold unreported", () => {
@@ -152,7 +152,7 @@ describe("ReadGroups component", () => {
       groupIps.map((ip) => ip.data),
       ["outer"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("reports levels within the threshold", () => {
@@ -165,6 +165,6 @@ describe("ReadGroups component", () => {
       groupIps.map((ip) => ip.data),
       ["outer", "inner"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });

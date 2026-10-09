@@ -21,7 +21,7 @@ describe("FirstGroup component", () => {
     const ips = collect(outSocket);
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ['DATA "a"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps only the first (outermost) group level", () => {
@@ -37,7 +37,7 @@ describe("FirstGroup component", () => {
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps the first group across sibling substreams", () => {
@@ -56,7 +56,7 @@ describe("FirstGroup component", () => {
     inSocket.post(new noflo.IP("closeBracket", "baz"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', 'DATA "b"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -70,7 +70,7 @@ describe("LastGroup component", () => {
     const ips = collect(outSocket);
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ['DATA "a"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps a single group", () => {
@@ -84,7 +84,7 @@ describe("LastGroup component", () => {
     inSocket.post(new noflo.IP("data", "a"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps only the last (innermost) group with data", () => {
@@ -100,7 +100,7 @@ describe("LastGroup component", () => {
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< bar", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps one group around two IPs", () => {
@@ -115,7 +115,7 @@ describe("LastGroup component", () => {
     inSocket.post(new noflo.IP("data", "b"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', 'DATA "b"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -129,7 +129,7 @@ describe("MergeGroups component", () => {
     const ips = collect(outSocket);
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ['DATA "a"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps a single-level stream as-is", () => {
@@ -144,7 +144,7 @@ describe("MergeGroups component", () => {
     inSocket.post(new noflo.IP("data", "b"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', 'DATA "b"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("flattens a stream with substreams to one level", () => {
@@ -163,7 +163,7 @@ describe("MergeGroups component", () => {
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(ips), ["< foo:bar", 'DATA "a"', 'DATA "b"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -205,7 +205,7 @@ describe("FilterByGroup component", () => {
       groupIps.map((ip) => ip.data),
       ["foo"],
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("sends sub-groups of the matching group", () => {
@@ -217,7 +217,7 @@ describe("FilterByGroup component", () => {
     inSocket.post(new noflo.IP("closeBracket", "sub"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(outIps), ["< sub", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("sends an empty bang when nothing matched", () => {
@@ -227,7 +227,7 @@ describe("FilterByGroup component", () => {
     inSocket.post(new noflo.IP("data", "b"));
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     assert.equal(emptyIps.length, 1);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -256,7 +256,7 @@ describe("Objectify component", () => {
     inSocket.post(new noflo.IP("data", "whatever"));
     inSocket.post(new noflo.IP("closeBracket", "abc"));
     assert.deepEqual(render(outIps), ["< abc", 'DATA {"a":"whatever"}', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("passes non-matching groups through as-is", () => {
@@ -266,7 +266,7 @@ describe("Objectify component", () => {
     inSocket.post(new noflo.IP("data", "whatever"));
     inSocket.post(new noflo.IP("closeBracket", "xyz"));
     assert.deepEqual(render(outIps), ["< xyz", 'DATA "whatever"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -294,7 +294,7 @@ describe("Regroup component", () => {
     inSocket.post(new noflo.IP("data", "data"));
     inSocket.post(new noflo.IP("closeBracket", "group"));
     assert.deepEqual(render(outIps), ['DATA "data"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("replaces the groups around the packet", () => {
@@ -314,7 +314,7 @@ describe("Regroup component", () => {
       ">",
       ">",
     ]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -346,7 +346,7 @@ describe("RemoveGroups component", () => {
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(outIps), ['DATA "a"']);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("removes only matching groups", () => {
@@ -358,7 +358,7 @@ describe("RemoveGroups component", () => {
     inSocket.post(new noflo.IP("closeBracket", "bar"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(outIps), ["< foo", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("keeps groups when they do not match", () => {
@@ -368,6 +368,6 @@ describe("RemoveGroups component", () => {
     inSocket.post(new noflo.IP("data", "a"));
     inSocket.post(new noflo.IP("closeBracket", "foo"));
     assert.deepEqual(render(outIps), ["< foo", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });

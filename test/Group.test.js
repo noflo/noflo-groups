@@ -28,7 +28,7 @@ describe("Group component", () => {
     groupSocket.post(new noflo.IP("data", "foo"));
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ["< foo", 'DATA "a"', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("sends the packet with nested groups from a colon string", () => {
@@ -37,7 +37,7 @@ describe("Group component", () => {
     groupSocket.post(new noflo.IP("data", "foo:bar"));
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ["< foo", "< bar", 'DATA "a"', ">", ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("accepts an array of groups", () => {
@@ -46,7 +46,7 @@ describe("Group component", () => {
     groupSocket.post(new noflo.IP("data", ["foo", "bar"]));
     inSocket.post(new noflo.IP("data", "a"));
     assert.deepEqual(render(ips), ["< foo", "< bar", 'DATA "a"', ">", ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
@@ -100,7 +100,7 @@ describe("GroupByObjectKey component", () => {
       'DATA {"name":"foo","other":1}',
       ">",
     ]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("sends the packet with an undefined group for non-string values", () => {
@@ -109,7 +109,7 @@ describe("GroupByObjectKey component", () => {
     keySocket.post(new noflo.IP("data", "name"));
     inSocket.post(new noflo.IP("data", { name: 42 }));
     assert.deepEqual(render(ips), ["< undefined", 'DATA {"name":42}', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("groups boolean true by the key name", () => {
@@ -118,7 +118,7 @@ describe("GroupByObjectKey component", () => {
     keySocket.post(new noflo.IP("data", "name"));
     inSocket.post(new noflo.IP("data", { name: true }));
     assert.deepEqual(render(ips), ["< name", 'DATA {"name":true}', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("groups boolean false as undefined", () => {
@@ -127,7 +127,7 @@ describe("GroupByObjectKey component", () => {
     keySocket.post(new noflo.IP("data", "name"));
     inSocket.post(new noflo.IP("data", { name: false }));
     assert.deepEqual(render(ips), ["< undefined", 'DATA {"name":false}', ">"]);
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 
   it("sends an error for non-object payloads", () => {
@@ -140,7 +140,7 @@ describe("GroupByObjectKey component", () => {
       /** @type {Error} */ (errors[0].data).message,
       "Data is not an object",
     );
-    c.tearDown?.(() => {});
+    c.tearDown?.();
   });
 });
 
