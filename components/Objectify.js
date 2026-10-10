@@ -2,7 +2,7 @@ import { Component } from "@noflo/noflo";
 
 /**
  * Uses the first match of the `regexp` control against an incoming group
- * name as the key of an object containing the data. Non-matching groups
+ * name as the key of an object containing the data. Non-matching brackets
  * and their data pass through unchanged.
  * @returns {import("@noflo/noflo").Component} The configured component
  */

@@ -2,42 +2,43 @@ import { Component, IP } from "@noflo/noflo";
 
 /**
  * Stores data IPs keyed by their bracket context and releases them when
- * a bang arrives on `in` carrying a matching group stream. Data stored
+ * a bang arrives on `in` carrying a matching bracket stream. Data stored
  * after the release request for the same identifier is sent immediately.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
     description:
-      'Send packet held in "data" when receiving matching set of groups in "in"',
+      'Send packet held in "data" when receiving matching set of brackets in "in"',
     icon: "share-square",
     forwardBrackets: {},
     inPorts: {
       in: {
         datatype: "bang",
-        description: "Signal to release IPs associated with the emitted group",
+        description:
+          "Signal to release IPs associated with the emitted bracket",
         required: true,
       },
       data: {
         datatype: "all",
-        description: "IP to store by group",
+        description: "IP to store by bracket",
         addressable: true,
       },
     },
     outPorts: {
       out: {
         datatype: "all",
-        description: "IP associated with a group received on the in port",
+        description: "IP associated with a bracket received on the in port",
       },
     },
   });
 
   /**
-   * @param {unknown[]} groups
+   * @param {unknown[]} brackets
    * @returns {string}
    */
-  const getIdentifier = (groups) =>
-    groups.length ? groups.join(":") : "ungrouped";
+  const getIdentifier = (brackets) =>
+    brackets.length ? brackets.join(":") : "unbracketed";
 
   /** @type {Map<string, Record<string, import("@noflo/noflo").IP>>} */
   const stored = new Map();
@@ -60,10 +61,10 @@ export function getComponent() {
   /**
    * @param {OutputLike} output
    * @param {string|null} scope
-   * @param {unknown[]} groups
+   * @param {unknown[]} brackets
    */
-  const release = (output, scope, groups) => {
-    const identifier = getIdentifier(groups);
+  const release = (output, scope, brackets) => {
+    const identifier = getIdentifier(brackets);
     const scopeKey = scope ?? "null";
     let releasedScope = released.get(scopeKey);
     if (!releasedScope) {
@@ -75,12 +76,12 @@ export function getComponent() {
     if (!storedScope?.[identifier]) {
       return;
     }
-    for (const group of groups) {
-      output.send({ out: new IP("openBracket", group) });
+    for (const bracket of brackets) {
+      output.send({ out: new IP("openBracket", bracket) });
     }
     output.send({ out: storedScope[identifier] });
-    for (const group of groups.slice().reverse()) {
-      output.send({ out: new IP("closeBracket", group) });
+    for (const bracket of brackets.slice().reverse()) {
+      output.send({ out: new IP("closeBracket", bracket) });
     }
     // Mark as non-released after sending
     releasedScope[identifier] = false;

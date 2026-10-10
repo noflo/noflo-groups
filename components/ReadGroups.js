@@ -1,14 +1,14 @@
 import { Component } from "@noflo/noflo";
 
 /**
- * Sends the group names surrounding each packet on a `group` port while
+ * Sends the bracket names surrounding each packet on a `group` port while
  * forwarding every IP. Unlike ReadGroup, it can `strip` brackets from the
- * forwarded stream and only forward group levels up to a `threshold`.
+ * forwarded stream and only forward bracket levels up to a `threshold`.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Send the groups surrounding a packet",
+    description: "Send the brackets surrounding a packet",
     forwardBrackets: {},
     inPorts: {
       in: { datatype: "all", addressable: true },
@@ -30,7 +30,7 @@ export function getComponent() {
   });
 
   /** @type {Map<string, string[]>} */
-  const groups = new Map();
+  const brackets = new Map();
   /**
    * @param {string|null} scope
    * @param {number|null} idx
@@ -38,15 +38,15 @@ export function getComponent() {
    */
   const ensureGroups = (scope, idx) => {
     const key = `${scope ?? "null"}#${idx ?? 0}`;
-    let list = groups.get(key);
+    let list = brackets.get(key);
     if (!list) {
       list = [];
-      groups.set(key, list);
+      brackets.set(key, list);
     }
     return list;
   };
   c.tearDown = async () => {
-    groups.clear();
+    brackets.clear();
   };
 
   c.process((input, output) => {

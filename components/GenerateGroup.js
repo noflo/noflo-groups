@@ -10,7 +10,7 @@ import { Component, IP } from "@noflo/noflo";
  */
 export function getComponent() {
   const c = new Component({
-    description: "Wrap IPs into a random UUID generated group",
+    description: "Wrap IPs into a random UUID generated bracket",
     inPorts: {
       in: {
         datatype: "all",

@@ -45,7 +45,7 @@ export function getComponent() {
   /**
    * @typedef {Object} CollectContext
    * @property {Record<string, unknown>} data
-   * @property {Record<number, string[]>} groups
+   * @property {Record<number, string[]>} brackets
    * @property {string[]} keys
    * @property {string[]} allpackets
    */
@@ -60,7 +60,7 @@ export function getComponent() {
     const key = scope ?? "null";
     let context = contexts.get(key);
     if (!context) {
-      context = { data: {}, groups: {}, keys: [], allpackets: [] };
+      context = { data: {}, brackets: {}, keys: [], allpackets: [] };
       contexts.set(key, context);
     }
     return context;
@@ -127,20 +127,20 @@ export function getComponent() {
         continue;
       }
 
-      if (!context.groups[idx]) {
-        context.groups[idx] = [];
+      if (!context.brackets[idx]) {
+        context.brackets[idx] = [];
       }
       if (packet.type === "openBracket") {
-        context.groups[idx].push(packet.data);
+        context.brackets[idx].push(packet.data);
         continue;
       }
       if (packet.type === "data") {
         const key = context.keys[idx];
         /** @type {Record<string, unknown>} */
         let target = context.data;
-        if (context.groups[idx].length) {
-          // First level key is the group name, if any
-          const groupId = context.groups[idx][0];
+        if (context.brackets[idx].length) {
+          // First level key is the bracket name, if any
+          const groupId = context.brackets[idx][0];
           if (!context.data[groupId]) {
             context.data[groupId] = {};
           }
@@ -160,7 +160,7 @@ export function getComponent() {
         continue;
       }
       if (packet.type === "closeBracket") {
-        context.groups[idx].pop();
+        context.brackets[idx].pop();
       }
     }
     output.done();

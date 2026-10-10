@@ -26,7 +26,7 @@ export function getComponent() {
     outPorts: {
       out: {
         datatype: "all",
-        description: "Forwarded IPs with encapsulating groups",
+        description: "Forwarded IPs with encapsulating brackets",
       },
     },
   });

@@ -2,12 +2,12 @@ import { Component, IP } from "@noflo/noflo";
 
 /**
  * Wraps each incoming data IP into a bracket named by the `group` port
- * value, pairing data and group packets by order received.
+ * value, pairing data and bracket packets by order received.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Group packets by a group in order received",
+    description: "Bracket packets by a bracket in order received",
     forwardBrackets: {},
     inPorts: {
       in: { datatype: "all", required: true },

@@ -1,15 +1,15 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Forwards all data IPs, strips incoming groups, and replaces them with
- * the group names accumulated on the `group` port (each `group` data IP
+ * Forwards all data IPs, strips incoming brackets, and replaces them with
+ * the bracket names accumulated on the `group` port (each `group` data IP
  * adds one level, kept for subsequent packets until shutdown).
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
     description:
-      "Forward all the data IPs, strip all groups, and replace them with groups from another connection",
+      "Forward all the data IPs, strip all brackets, and replace them with brackets from another connection",
     forwardBrackets: {},
     inPorts: {
       in: { datatype: "all", required: true },
@@ -43,14 +43,14 @@ export function getComponent() {
     }
     const key = input.scope ?? "null";
     const stored = groupMap.get(key);
-    const groups = stored ? stored.slice(0) : [];
+    const brackets = stored ? stored.slice(0) : [];
     const data = input.getData("in");
-    for (const group of groups) {
-      output.send({ out: new IP("openBracket", group) });
+    for (const bracket of brackets) {
+      output.send({ out: new IP("openBracket", bracket) });
     }
     output.send({ out: data });
-    for (const group of groups.slice().reverse()) {
-      output.send({ out: new IP("closeBracket", group) });
+    for (const bracket of brackets.slice().reverse()) {
+      output.send({ out: new IP("closeBracket", bracket) });
     }
     output.done();
   });

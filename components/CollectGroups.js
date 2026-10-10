@@ -1,14 +1,15 @@
 import { Component } from "@noflo/noflo";
 
 /**
- * Collects a stream of packets into an object keyed by its groups. Data
- * IPs are stored under a `$data` property on each level; a group named
+ * Collects a stream of packets into an object keyed by its brackets. Data
+ * IPs are stored under a `$data` property on each level; a bracket named
  * `$data` is an error.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Collect a stream of packets into object keyed by its groups",
+    description:
+      "Collect a stream of packets into object keyed by its brackets",
     forwardBrackets: {},
     inPorts: {
       in: {
@@ -21,7 +22,7 @@ export function getComponent() {
       out: {
         datatype: "object",
         description:
-          "An object containing input IPs sorted by their group names",
+          "An object containing input IPs sorted by their bracket names",
       },
       error: { datatype: "object" },
     },
@@ -43,24 +44,24 @@ export function getComponent() {
     // Working variable for incoming IPs
     /** @type {Record<string, unknown>} */
     let data = {};
-    // Breadcrumb of incoming groups
+    // Breadcrumb of incoming brackets
     /** @type {unknown[]} */
     const groupTrail = [];
-    // Breadcrumb of each level of IPs as partitioned by groups
+    // Breadcrumb of each level of IPs as partitioned by brackets
     /** @type {Record<string, unknown>[]} */
     const parents = [];
 
     for (const packet of stream) {
       if (packet.type === "openBracket") {
         // The attribute name `$data` indicates data IPs in the outgoing
-        // structure, so no group may be named `$data`
+        // structure, so no bracket may be named `$data`
         if (packet.data === "$data") {
-          output.done(new Error("groups cannot be named '$data'"));
+          output.done(new Error("brackets cannot be named '$data'"));
           return;
         }
         // Save whatever is in the working memory right now into its own level
         parents.push(data);
-        // Save the current group
+        // Save the current bracket
         groupTrail.push(packet.data);
         // Clear working memory for the new level
         data = {};
@@ -79,7 +80,7 @@ export function getComponent() {
         const oldData = data;
         // Take out the previous level
         data = /** @type {Record<string, unknown>} */ (parents.pop());
-        // Put the working memory into the previous level under the group
+        // Put the working memory into the previous level under the bracket
         // name being closed
         const child = /** @type {string} */ (groupTrail.pop());
         if (!(child in data)) {

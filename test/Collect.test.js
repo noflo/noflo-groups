@@ -60,7 +60,7 @@ describe("CollectGroups component", () => {
     assert.equal(errorIps.length, 1);
     assert.equal(
       /** @type {Error} */ (errorIps[0].data).message,
-      "groups cannot be named '$data'",
+      "brackets cannot be named '$data'",
     );
     c.tearDown?.();
   });

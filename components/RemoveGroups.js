@@ -1,14 +1,14 @@
 import { Component } from "@noflo/noflo";
 
 /**
- * Removes groups matching a string or a regex, or all groups when no
+ * Removes brackets matching a string or a regex, or all brackets when no
  * `regexp` is given. Data IPs always pass through.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
     description:
-      "Remove groups matching a string or a regex string, or all if no regexp given",
+      "Remove brackets matching a string or a regex string, or all if no regexp given",
     forwardBrackets: {},
     inPorts: {
       in: {
@@ -18,7 +18,7 @@ export function getComponent() {
       },
       regexp: {
         datatype: "string",
-        description: "Regexp used to remove groups",
+        description: "Regexp used to remove brackets",
         control: true,
       },
     },

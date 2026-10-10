@@ -1,20 +1,20 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Filters out groups that do not match the `regexp` control and their
- * children, forwarding only the content of the matching group. Sends an
+ * Filters out brackets that do not match the `regexp` control and their
+ * children, forwarding only the content of the matching bracket. Sends an
  * `empty` bang when a top-level stream produced no matching content.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
     description:
-      "Given a RegExp string, filter out groups that do not match and their children data packets/groups. Forward only the content of the matching group.",
+      "Given a RegExp string, filter out brackets that do not match and their children data packets/brackets. Forward only the content of the matching bracket.",
     forwardBrackets: {},
     inPorts: {
       in: {
         datatype: "all",
-        description: "IPs to filter groups from",
+        description: "IPs to filter brackets from",
         addressable: true,
         required: true,
       },

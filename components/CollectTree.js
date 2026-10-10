@@ -13,9 +13,10 @@ export function getComponent() {
     inPorts: {
       in: { datatype: "all", required: true },
       level: {
-        datatype: "integer",
+        datatype: "int",
         default: 0,
-        description: "Number of groups (from outermost) to skip collection of",
+        description:
+          "Number of brackets (from outermost) to skip collection of",
         control: true,
       },
     },
@@ -68,22 +69,22 @@ export function getComponent() {
         }
         let branch = data;
         for (let idx = 0; idx < collectGroups.length; idx += 1) {
-          const group = collectGroups[idx];
+          const bracket = collectGroups[idx];
           if (idx < collectGroups.length - 1) {
-            if (!branch[group]) {
-              branch[group] = {};
+            if (!branch[bracket]) {
+              branch[bracket] = {};
             }
-            branch = /** @type {Record<string, unknown>} */ (branch[group]);
+            branch = /** @type {Record<string, unknown>} */ (branch[bracket]);
             continue;
           }
-          if (!branch[group]) {
-            branch[group] = packet.data;
+          if (!branch[bracket]) {
+            branch[bracket] = packet.data;
             continue;
           }
-          if (!Array.isArray(branch[group])) {
-            branch[group] = [branch[group]];
+          if (!Array.isArray(branch[bracket])) {
+            branch[bracket] = [branch[bracket]];
           }
-          /** @type {unknown[]} */ (branch[group]).push(packet.data);
+          /** @type {unknown[]} */ (branch[bracket]).push(packet.data);
         }
         continue;
       }
@@ -100,12 +101,12 @@ export function getComponent() {
       return;
     }
 
-    for (const group of forwardGroups) {
-      output.send({ out: new IP("openBracket", group) });
+    for (const bracket of forwardGroups) {
+      output.send({ out: new IP("openBracket", bracket) });
     }
     output.send({ out: data });
-    for (const group of forwardGroups.slice().reverse()) {
-      output.send({ out: new IP("closeBracket", group) });
+    for (const bracket of forwardGroups.slice().reverse()) {
+      output.send({ out: new IP("closeBracket", bracket) });
     }
     output.done();
   });

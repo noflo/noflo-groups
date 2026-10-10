@@ -1,14 +1,14 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Replaces group names based on a static `map` (either an object or a
+ * Replaces bracket names based on a static `map` (either an object or a
  * `from=to` string) or a `regexp` map (`pattern=replacement`), applied
  * in object order. Data IPs and non-string bracket names pass through.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Replace groups based on static or regexp map",
+    description: "Replace brackets based on static or regexp map",
     forwardBrackets: {},
     inPorts: {
       map: { datatype: "all", control: true },
@@ -69,16 +69,16 @@ export function getComponent() {
         return;
       }
 
-      let group = packet.data;
+      let bracket = packet.data;
       for (const [expression, replacement] of Object.entries(regexp)) {
         const exp = new RegExp(expression);
-        const matched = exp.exec(group);
+        const matched = exp.exec(bracket);
         if (!matched) {
           continue;
         }
-        group = group.replace(exp, replacement);
+        bracket = bracket.replace(exp, replacement);
       }
-      output.sendDone({ out: new IP(packet.type, group) });
+      output.sendDone({ out: new IP(packet.type, bracket) });
       return;
     }
     output.done();

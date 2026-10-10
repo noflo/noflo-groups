@@ -1,13 +1,13 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Groups IPs by a key in their payload. Boolean `true` values group by
- * the property name itself; non-string values group as `undefined`.
+ * Groups IPs by a key in their payload. Boolean `true` values bracket by
+ * the property name itself; non-string values bracket as `undefined`.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Group IPs by a key in their payload",
+    description: "Bracket IPs by a key in their payload",
     forwardBrackets: {},
     inPorts: {
       in: { datatype: "object", required: true },
@@ -29,16 +29,16 @@ export function getComponent() {
       return;
     }
     const payload = /** @type {Record<string, unknown>} */ (data);
-    let group = payload[key];
+    let bracket = payload[key];
     if (typeof payload[key] !== "string") {
-      group = "undefined";
+      bracket = "undefined";
     }
     if (typeof payload[key] === "boolean" && payload[key]) {
-      group = key;
+      bracket = key;
     }
-    output.send({ out: new IP("openBracket", group) });
+    output.send({ out: new IP("openBracket", bracket) });
     output.send({ out: data });
-    output.send({ out: new IP("closeBracket", group) });
+    output.send({ out: new IP("closeBracket", bracket) });
     output.done();
   });
 

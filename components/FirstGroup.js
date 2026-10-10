@@ -1,13 +1,14 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Forwards incoming IPs and filters groups except the first (outermost)
+ * Forwards incoming IPs and filters brackets except the first (outermost)
  * level: only the outermost bracket of each stream is kept.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Forward incoming IPs and filter groups except the first one",
+    description:
+      "Forward incoming IPs and filter brackets except the first one",
     forwardBrackets: {},
     inPorts: {
       in: {

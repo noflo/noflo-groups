@@ -1,15 +1,15 @@
 import { Component, IP } from "@noflo/noflo";
 
 /**
- * Flattens the group tree of each connection to a single level: the
- * first data IP opens one bracket joining all enclosing group names,
+ * Flattens the bracket tree of each connection to a single level: the
+ * first data IP opens one bracket joining all enclosing bracket names,
  * closed when the enclosing levels end. Brackets arriving after data was
  * sent are ignored.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Flatten group tree to a single level",
+    description: "Flatten bracket tree to a single level",
     forwardBrackets: {},
     inPorts: {
       in: {
@@ -26,7 +26,7 @@ export function getComponent() {
 
   /**
    * @typedef {Object} DepthState
-   * @property {string[]} groups
+   * @property {string[]} brackets
    * @property {string[]} dataGroups
    */
 
@@ -41,7 +41,7 @@ export function getComponent() {
     const key = `${scope ?? "null"}#${idx ?? 0}`;
     let state = depth.get(key);
     if (!state) {
-      state = { groups: [], dataGroups: [] };
+      state = { brackets: [], dataGroups: [] };
       depth.set(key, state);
     }
     return state;
@@ -66,12 +66,12 @@ export function getComponent() {
       // non-addressable out port rejects sending it
       packet.index = null;
       if (packet.type === "openBracket") {
-        state.groups.push(packet.data);
+        state.brackets.push(packet.data);
         continue;
       }
       if (packet.type === "data") {
-        if (state.groups.length && !state.dataGroups.length) {
-          state.dataGroups = state.groups.slice(0);
+        if (state.brackets.length && !state.dataGroups.length) {
+          state.dataGroups = state.brackets.slice(0);
           output.send({
             out: new IP("openBracket", state.dataGroups.join(":")),
           });
@@ -80,13 +80,13 @@ export function getComponent() {
         continue;
       }
       if (packet.type === "closeBracket") {
-        if (state.groups.join(":") === state.dataGroups.join(":")) {
+        if (state.brackets.join(":") === state.dataGroups.join(":")) {
           output.send({
             out: new IP("closeBracket", state.dataGroups.join(":")),
           });
           state.dataGroups = [];
         }
-        state.groups.pop();
+        state.brackets.pop();
       }
     }
     output.done();

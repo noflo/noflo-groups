@@ -3,12 +3,12 @@ import { Component, IP } from "@noflo/noflo";
 /**
  * Forwards the innermost stream content: of each stream, only the
  * outermost bracket level that actually contains data is kept. Empty
- * group levels are dropped.
+ * bracket levels are dropped.
  * @returns {import("@noflo/noflo").Component} The configured component
  */
 export function getComponent() {
   const c = new Component({
-    description: "Forward incoming IPs and filter groups except the last one",
+    description: "Forward incoming IPs and filter brackets except the last one",
     forwardBrackets: {},
     inPorts: {
       in: {
